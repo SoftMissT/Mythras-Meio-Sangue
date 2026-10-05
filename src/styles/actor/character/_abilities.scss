@@ -111,4 +111,7 @@ div.abilities {
   #spellFilter:focus {
     box-shadow: none;
   }
+  #spellFilter:focus-visible {
+    box-shadow: $sheet-focus-ring;
+  }
 }

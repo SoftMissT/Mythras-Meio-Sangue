@@ -16,6 +16,10 @@
     box-shadow: none;
   }
 
+  input:focus-visible {
+    box-shadow: colors.$sheet-focus-ring;
+  }
+
   .input-label {
     padding: 0px;
     margin: 0px;

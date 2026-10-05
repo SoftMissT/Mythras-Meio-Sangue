@@ -1,3 +1,4 @@
+@use 'colors' as *;
 @use 'mixins';
 
 .height-100 {
@@ -47,7 +48,7 @@
     margin: 0;
     margin-bottom: 8px;
     border: none;
-    color: #191813;
+    color: $sheet-ink;
   }
 }
 

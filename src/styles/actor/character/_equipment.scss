@@ -7,10 +7,10 @@ div.equipment {
     tbody {
       tr {
         &:nth-child(odd) {
-          background-color: #eaeaea;
+          background-color: $sheet-row-alt;
         }
         &:hover {
-          background-color: #840107;
+          background-color: $sheet-row-hover;
           color: #fff;
 
           input {
@@ -20,7 +20,7 @@ div.equipment {
             color: #fff;
 
             option {
-              background-color: #840107;
+              background-color: $sheet-row-hover;
             }
           }
         }
@@ -121,6 +121,9 @@ div.equipment {
     #equipmentSearch:focus {
       box-shadow: none;
     }
+    #equipmentSearch:focus-visible {
+      box-shadow: $sheet-focus-ring;
+    }
   }
   #equipmentFilter {
     border: none;
@@ -128,6 +131,9 @@ div.equipment {
   }
   #equipmentFilter:focus {
     box-shadow: none;
+  }
+  #equipmentFilter:focus-visible {
+    box-shadow: $sheet-focus-ring;
   }
   .equipment-table {
     .item {

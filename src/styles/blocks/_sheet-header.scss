@@ -15,7 +15,7 @@
   }
 
   a.link-important {
-    color: #ff9065;
+    color: colors.$sheet-focus;
 
     &:focus-visible {
       outline: none;

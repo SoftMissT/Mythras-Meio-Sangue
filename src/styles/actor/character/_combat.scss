@@ -30,10 +30,10 @@ div.combat {
     tbody {
       tr {
         &:nth-child(odd) {
-          background-color: #eaeaea;
+          background-color: $sheet-row-alt;
         }
         &:hover {
-          background-color: #840107;
+          background-color: $sheet-row-hover;
           color: #fff;
 
           input {
@@ -43,7 +43,7 @@ div.combat {
             color: #fff;
 
             option {
-              background-color: #840107;
+              background-color: $sheet-row-hover;
             }
           }
         }
@@ -126,6 +126,11 @@ div.combat {
         -webkit-box-shadow: none;
         box-shadow: none;
         background-color: rgba(0, 0, 0, 0.1);
+      }
+
+      input:focus-visible,
+      textarea:focus-visible {
+        box-shadow: $sheet-focus-ring;
       }
 
       input:hover,

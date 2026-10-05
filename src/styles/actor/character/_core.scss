@@ -1,3 +1,4 @@
+@use 'colors' as *;
 div.core {
   .derived-stat-with-label {
     min-width: 67px;
@@ -6,10 +7,10 @@ div.core {
     tbody {
       tr {
         &:nth-child(odd) {
-          background-color: #eaeaea;
+          background-color: $sheet-row-alt;
         }
         &:hover {
-          background-color: #840107;
+          background-color: $sheet-row-hover;
           color: #fff;
 
           input {
@@ -19,7 +20,7 @@ div.core {
             color: #fff;
 
             option {
-              background-color: #840107;
+              background-color: $sheet-row-hover;
             }
           }
         }

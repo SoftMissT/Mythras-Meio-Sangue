@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-label="Mythras: Meio-Sangue — sistema para Foundry VTT em português">
+  <title>Mythras: Meio-Sangue</title>
+  <rect width="1200" height="320" fill="#191813"/>
+  <rect x="0" y="0" width="10" height="320" fill="#840107"/>
+  <rect x="10" y="0" width="3" height="320" fill="#f5f0e6" opacity="0.15"/>
+  <text x="64" y="132" font-family="Georgia, 'Times New Roman', serif" font-size="96" font-weight="700" letter-spacing="6" fill="#f5f0e6">MYTHRAS</text>
+  <text x="64" y="216" font-family="Georgia, 'Times New Roman', serif" font-size="72" font-weight="700" letter-spacing="14" fill="#840107">MEIO-SANGUE</text>
+  <rect x="66" y="244" width="560" height="2" fill="#840107"/>
+  <text x="64" y="284" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="3" fill="#c9c4bb">SISTEMA PARA FOUNDRY VTT &#183; PORTUGUÊS (BR)</text>
+  <text x="1136" y="284" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="2" fill="#ff9065">PROJETO DE FÃ</text>
+</svg>

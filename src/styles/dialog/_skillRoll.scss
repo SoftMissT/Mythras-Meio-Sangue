@@ -29,6 +29,9 @@ section.window-content:has(.dialog-sheet) {
       -webkit-box-shadow: none;
       box-shadow: none;
     }
+    input:focus-visible {
+      box-shadow: colors.$sheet-focus-ring;
+    }
     input {
       border: 0;
     }
@@ -46,6 +49,9 @@ section.window-content:has(.dialog-sheet) {
       -webkit-box-shadow: none;
       box-shadow: none;
       background-color: rgba(0, 0, 0, 0.1);
+    }
+    select:focus-visible {
+      box-shadow: colors.$sheet-focus-ring;
     }
 
     .header-flex {

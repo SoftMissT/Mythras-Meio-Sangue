@@ -1,9 +1,11 @@
+@use 'colors' as *;
+
 div.notes {
   margin: 0;
   > h2 {
     margin-top: 5px;
     margin-bottom: 13px;
-    color: #191813;
+    color: $sheet-ink;
     border: none;
     font-size: 21px;
     border: 0;
