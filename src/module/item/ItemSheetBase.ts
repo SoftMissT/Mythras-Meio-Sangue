@@ -68,11 +68,14 @@ export class ItemSheetBase<TItem extends ItemMythras> extends foundry.applicatio
     const item = this.item
 
     // Enrich HTML description
-    const descriptionHTML = await TextEditor.enrichHTML((item.system as any).description, {
-      secrets: item.isOwner,
-      documents: true,
-      rollData: item.getRollData() as Record<string, unknown>
-    })
+    const descriptionHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
+      (item.system as any).description,
+      {
+        secrets: item.isOwner,
+        documents: true,
+        rollData: item.getRollData() as Record<string, unknown>
+      }
+    )
 
     return {
       item,

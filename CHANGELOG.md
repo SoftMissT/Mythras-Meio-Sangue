@@ -16,6 +16,12 @@
 - `readme` no `system.json`; `LICENSE` e `README.md` agora entram no pacote de build (CopyPlugin).
 - README: banner SVG (`static/assets/banner-meio-sangue.svg`), badges de versão/Foundry/licença/idioma, links quebrados `mythras/*` corrigidos para a raiz e copy reescrita.
 
+### Fixed
+
+- Hooks `renderChatMessage` migrados para `renderChatMessageHTML` (V14 passa `HTMLElement` no hook novo; antes: `html.querySelectorAll is not a function` em todo render de chat).
+- `TextEditor.enrichHTML` → `foundry.applications.ux.TextEditor.implementation.enrichHTML` (elimina deprecation warning do global).
+- Stub de tipos: namespace `foundry.applications.ux` (`types/foundry/client-esm/applications/ux/module.d.ts`).
+
 ### Changed
 
 - jQuery → DOM nativo em sheets, dialogs e hooks (`HTMLElement` no V14).

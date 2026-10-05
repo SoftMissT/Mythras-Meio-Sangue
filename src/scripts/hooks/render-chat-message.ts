@@ -3,7 +3,7 @@ import { SkillMythras } from '@module/item/skill'
 
 export const RenderChatMessage = {
   listen: (): void => {
-    Hooks.on('renderChatMessage', (_app, html: HTMLElement) => {
+    Hooks.on('renderChatMessageHTML', (_app, html: HTMLElement) => {
       const chatButtons = [...html.querySelectorAll('.apply-damage')]
       const chatMessage = chatButtons[chatButtons.length - 1] as HTMLElement | undefined
       const revealButton = html.querySelector('.revealDamage') as HTMLElement | null
@@ -46,7 +46,7 @@ export const RenderChatMessage = {
       }
     })
 
-    Hooks.on('renderChatMessage', (_message: ChatMessage, html: HTMLElement) => {
+    Hooks.on('renderChatMessageHTML', (_message: ChatMessage, html: HTMLElement) => {
       html.querySelector('.btn-contested-roll')?.addEventListener('click', async () => {
         // 1) Ensure there is exactly one controlled token
         const controlled = game.canvas.tokens.controlled

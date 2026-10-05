@@ -241,16 +241,22 @@ export abstract class ActorSheetBase<TActor extends ActorMythras> extends foundr
     }
 
     // Journal HTML enrichment
-    data.journalHTML = await TextEditor.enrichHTML(data.system.journal, {
-      secrets: this.actor.isOwner,
-      rollData: data.rollData
-    })
+    data.journalHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
+      data.system.journal,
+      {
+        secrets: this.actor.isOwner,
+        rollData: data.rollData
+      }
+    )
 
     // Abilities HTML enrichment
-    data.abilitiesDesc = await TextEditor.enrichHTML(data.system.abilitiesDesc, {
-      secrets: this.actor.isOwner,
-      rollData: data.rollData
-    })
+    data.abilitiesDesc = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
+      data.system.abilitiesDesc,
+      {
+        secrets: this.actor.isOwner,
+        rollData: data.rollData
+      }
+    )
 
     this.sortItems(data)
     return data
