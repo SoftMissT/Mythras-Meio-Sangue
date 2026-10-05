@@ -153,6 +153,9 @@ const config: WebpackConfiguration = {
     new CopyPlugin({
       patterns: [
         { from: 'system.json' },
+        { from: 'LICENSE' },
+        { from: 'README.md' },
+        { from: 'CHANGELOG.md' },
         {
           from: 'static/',
           transform(content: Buffer, absoluteFrom: string) {

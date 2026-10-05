@@ -97,7 +97,7 @@ See [CONTRIBUTING.md](mythras/CONTRIBUTING.md) for the development environment s
 
 <div align="center">
 
-<img src="http://thedesignmechanism.com/resources/mythras-gateway-logo-black-small.jpg" alt="Mythras Gateway Logo" width="180"/>
+<img src="static/assets/sheet/mythras-gateway-logo-white.jpg" alt="Mythras Gateway Logo" width="180"/>
 
 *Mythras Gateway  usado com permissão / used with permission*  
 *The Design Mechanism makes no representation or warranty as to the quality, viability, or suitability for purpose of this product.*

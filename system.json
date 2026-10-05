@@ -1,11 +1,12 @@
 {
   "id": "mythras",
-  "title": "Mythras",
-  "description": "The Mythras system for FoundryVTT!",
-  "version": "2.x.x",
+  "title": "Mythras: Meio-Sangue",
+  "description": "Adaptação em português brasileiro do sistema Mythras para Foundry VTT v14. Projeto de fã não oficial — fork do Foundry VTT Mythras (kp-systems, licença MIT), adaptado ao cenário Meio-Sangue. Usa as regras Mythras Imperative da The Design Mechanism.",
+  "version": "3.0.0",
   "compatibility": {
-    "minimum": 11,
-    "verified": 13
+    "minimum": 13.350,
+    "verified": 14,
+    "maximum": 14
   },
   "authors": [
     {
@@ -17,11 +18,14 @@
       "name": "Tom Paoloni",
       "email": "tpaoloni@protonmail.com",
       "discord": "goog#9039"
+    },
+    {
+      "name": "SoftMissT",
+      "url": "https://github.com/SoftMissT"
     }
   ],
   "esmodules": ["main.bundle.js"],
   "styles": ["./styles/main.css"],
-  "scripts": [],
   "packs": [
     {
       "name": "standardSkill",
@@ -36,7 +40,6 @@
       "path": "packs/professionalskill.db",
       "type": "Item",
       "system": "mythras"
-
     },
     {
       "name": "humanoidHitLocations",
@@ -44,7 +47,6 @@
       "path": "packs/humanoidHitLocations.db",
       "type": "Item",
       "system": "mythras"
-
     }
   ],
   "languages": [
@@ -85,13 +87,15 @@
     }
   ],
   "socket": true,
-  "grid.distance": 1.5,
-  "grid.units": "m",
-  "primaryTokenAttribute": "health",
-  "secondaryTokenAttribute": "power",
-  "url": "https://gitlab.com/tpaoloni/mythras",
-  "bugs": "https://gitlab.com/hooking/mythras/-/issues",
-  "manifest": "http://gitlab.com/tpaoloni/mythras/-/jobs/artifacts/2.x.x/system.json",
-  "download": "https://gitlab.com/tpaoloni/mythras/-/jobs/artifacts/2.x.x/mythras.zip",
-  "license": "LICENSE.txt"
+  "grid": {
+    "distance": 1.5,
+    "units": "m"
+  },
+  "url": "https://github.com/SoftMissT/Mythras-Meio-Sangue",
+  "bugs": "https://github.com/SoftMissT/Mythras-Meio-Sangue/issues",
+  "manifest": "https://raw.githubusercontent.com/SoftMissT/Mythras-Meio-Sangue/main/system.json",
+  "download": "https://github.com/SoftMissT/Mythras-Meio-Sangue/archive/refs/heads/main.zip",
+  "license": "LICENSE",
+  "readme": "README.md",
+  "changelog": "CHANGELOG.md"
 }
