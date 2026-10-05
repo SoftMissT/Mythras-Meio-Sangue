@@ -1,4 +1,3 @@
 export const Setup = {
-  listen: (): void => {
-  }
+  listen: (): void => {}
 }

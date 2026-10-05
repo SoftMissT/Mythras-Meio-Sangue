@@ -12,7 +12,9 @@ interface StorageMythras {
   readonly system: StorageData
 }
 
-class StorageMythras<TParent extends ActorMythras | null = ActorMythras  | null> extends  PhysicalItemMythras<TParent> {
+class StorageMythras<
+  TParent extends ActorMythras | null = ActorMythras | null
+> extends PhysicalItemMythras<TParent> {
   isStorage: boolean = true
 
   get contentEncumbrance() {

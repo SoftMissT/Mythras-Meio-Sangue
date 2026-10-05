@@ -3,7 +3,7 @@ div.core {
     min-width: 67px;
   }
   .basic-table {
-    tbody {      
+    tbody {
       tr {
         &:nth-child(odd) {
           background-color: #eaeaea;
@@ -11,7 +11,7 @@ div.core {
         &:hover {
           background-color: #840107;
           color: #fff;
-          
+
           input {
             color: #fff;
           }
@@ -21,7 +21,6 @@ div.core {
             option {
               background-color: #840107;
             }
-
           }
         }
         select {

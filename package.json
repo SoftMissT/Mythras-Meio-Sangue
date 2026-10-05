@@ -16,6 +16,7 @@
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/glob": "^7.2.0",
+    "@types/handlebars": "^4.0.40",
     "@types/jquery": "^3.5.30",
     "@types/webpack-env": "^1.18.5",
     "copy-webpack-plugin": "^11.0.0",

@@ -36,7 +36,7 @@
             </thead>
             <tbody>
               {{#each items.hitLocation as |item id|}}
-              <tr class="item" data-item data-item-id="{{ item.id }}">
+              <tr class="item draggable" data-item data-item-id="{{ item.id }}">
                 <td class="hitloc-location-cell">
                   <input type="text" data-item-property="name" data-dtype="text" value="{{item.name}}" />
                 </td>
@@ -94,7 +94,7 @@
             </thead>
             <tbody>
               {{#with (findItemByName items.standardSkill "Brawn") as |item|}}
-              <tr class="item" data-item-id="{{item.id}}">
+              <tr class="item draggable" data-item-id="{{item.id}}">
                 <td>
                   <a class="item-name item-control item-edit">
                     {{item.name}}
@@ -111,7 +111,7 @@
               </tr>
               {{/with}}
               {{#with (findItemByName items.standardSkill "Endurance") as |item|}}
-              <tr class="item" data-item-id="{{item.id}}">
+              <tr class="item draggable" data-item-id="{{item.id}}">
                 <td>
                   <a class="item-name item-control item-edit">
                     {{item.name}}
@@ -128,7 +128,7 @@
               </tr>
               {{/with}}
               {{#with (findItemByName items.standardSkill "Evade") as |item|}}
-              <tr class="item" data-item-id="{{item.id}}">
+              <tr class="item draggable" data-item-id="{{item.id}}">
                 <td>
                   <a class="item-name item-control item-edit">
                     {{item.name}}
@@ -145,7 +145,7 @@
               </tr>
               {{/with}}
               {{#with (findItemByName items.standardSkill "Willpower") as |item|}}
-              <tr class="item" data-item-id="{{item.id}}">
+              <tr class="item draggable" data-item-id="{{item.id}}">
                 <td>
                   <a class="item-name item-control item-edit">
                     {{item.name}}
@@ -204,7 +204,7 @@
         </thead>
         <tbody>
           {{#each items.combatStyle as |item id|}}
-          <tr class="item" data-item-id="{{item.id}}">
+          <tr class="item draggable" data-item-id="{{item.id}}">
             <td>
               <a class="item-name item-control item-edit">
                 {{item.name}}
@@ -278,7 +278,7 @@
         </thead>
         <tbody>
           {{#each items.[ranged-weapon] as |item id|}}
-          <tr class="item" data-item-id="{{item.id}}">
+          <tr class="item draggable" data-item data-item-id="{{item.id}}">
             <td>
               <a class="item-name item-control item-edit">
                 {{item.name}}
@@ -290,7 +290,7 @@
               </a>
             </td>
             <td>
-              <input type="checkbox" name="damageModifier" {{checked system.damageModifier}} />
+              <input data-item-property="damageModifier" type="checkbox" {{checked system.damageModifier}} />
             </td>
             <td>
               {{item.system.force}}
@@ -351,7 +351,7 @@
             </thead>
             <tbody>
             {{#each items.[melee-weapon] as |item id|}}
-                <tr class="item" data-item-id="{{item.id}}">
+                <tr class="item draggable" data-item data-item-id="{{item.id}}">
                     <td>
                         <a class="item-name item-control item-edit">
                             {{item.name}}
@@ -363,7 +363,7 @@
                         </a>
                     </td>
                     <td>
-                        <input type="checkbox" name="system.damageModifier" {{checked system.damageModifier}} />
+                        <input data-item-property="damageModifier" type="checkbox" {{checked system.damageModifier}} />
                     </td>
                     <td>
                         {{item.system.size}}

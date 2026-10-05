@@ -6,19 +6,19 @@ export class EncounterGeneratorEnemyImporter extends EncounterGeneratorImporter 
   protected tabName: string = 'enemies'
 
   public rankMap = {
-    1: "Rabble 1",
-    2: "Novice 2",
-    3: "Skilled 3",
-    4: "Veteran 4",
-    5: "Master 5"
+    1: 'Rabble 1',
+    2: 'Novice 2',
+    3: 'Skilled 3',
+    4: 'Veteran 4',
+    5: 'Master 5'
   }
 
   public reverseRankMap = {
-    "Rabble 1": 1,
-    "Novice 2": 2,
-    "Skilled 3": 3,
-    "Veteran 4": 4,
-    "Master 5": 5
+    'Rabble 1': 1,
+    'Novice 2': 2,
+    'Skilled 3': 3,
+    'Veteran 4': 4,
+    'Master 5': 5
   }
 
   public raceList: Record<string, boolean> = {}
@@ -28,19 +28,19 @@ export class EncounterGeneratorEnemyImporter extends EncounterGeneratorImporter 
   private selectedRanks: Record<string, boolean> = {}
 
   protected filters: {
-    search: string,
+    search: string
     ranks: Record<string, boolean>
   }
 
   protected prepareFilters(): void {
     this.filters = {
-      search: "",
+      search: '',
       ranks: {
-        "Rabble 1": false,
-        "Novice 2": false,
-        "Skilled 3": false,
-        "Veteran 4": false,
-        "Master 5": false
+        'Rabble 1': false,
+        'Novice 2': false,
+        'Skilled 3': false,
+        'Veteran 4': false,
+        'Master 5': false
       }
     }
   }
@@ -60,27 +60,36 @@ export class EncounterGeneratorEnemyImporter extends EncounterGeneratorImporter 
     if (!nameAndRace.includes(searchText.toLocaleLowerCase())) {
       include = false
     }
-    if (Object.keys(this.selectedRaces).length && !Object.keys(this.selectedRaces).includes(template.race)) {
+    if (
+      Object.keys(this.selectedRaces).length &&
+      !Object.keys(this.selectedRaces).includes(template.race)
+    ) {
       include = false
     }
-    if (Object.keys(this.selectedOwners).length && !Object.keys(this.selectedOwners).includes(template.owner)) {
+    if (
+      Object.keys(this.selectedOwners).length &&
+      !Object.keys(this.selectedOwners).includes(template.owner)
+    ) {
       include = false
     }
-    if (Object.keys(this.selectedRanks).length && !Object.keys(this.selectedRanks).includes(String(template.rank))) {
+    if (
+      Object.keys(this.selectedRanks).length &&
+      !Object.keys(this.selectedRanks).includes(String(template.rank))
+    ) {
       include = false
     }
     return include
   }
 
-  private searchEnemies($searchInput: JQuery<HTMLElement>) {
+  private searchEnemies(searchInput: HTMLInputElement) {
     if (this.showAdvancedFilters) {
-      this.element.find('[data-filter-list]').each((_, element) => {
-        const listName = $(element).data().filterList
+      this.element.querySelectorAll<HTMLElement>('[data-filter-list]').forEach((element) => {
+        const listName = element.dataset.filterList!
         this.filterListLastScrollTops[listName] = element.scrollTop
       })
     }
 
-    this.filters.search = $searchInput.val() as string
+    this.filters.search = searchInput.value
     this.scrollLimit = 100
     this.lastScrollTop = 0
     this.templatesPage = []
@@ -89,7 +98,6 @@ export class EncounterGeneratorEnemyImporter extends EncounterGeneratorImporter 
     this.encounterGenerator.render(true)
   }
 
-  
   private async getRaces() {
     if (!this.allTemplates) {
       this.allTemplates = await this.loadTemplates()
@@ -109,42 +117,45 @@ export class EncounterGeneratorEnemyImporter extends EncounterGeneratorImporter 
     }
   }
 
-
   public override activateListeners(): void {
     super.activateListeners()
-    const $enemyFilters = this.element.find(".template-list-filters");
-    const $enemySearchInput = $enemyFilters.find('input[name=searchTerm]')
-    $enemySearchInput.on('keypress', (event) => {
-      if(event.key === 'Enter')
-      {
-        this.searchEnemies($enemySearchInput)
-      }
-    });
-    $enemyFilters.find('.search-button').on('click', (event) => {
-      this.searchEnemies($enemySearchInput)
+    const enemyFilters = this.element.querySelector<HTMLElement>('.template-list-filters')
+    if (!enemyFilters) return
+    const searchInput = enemyFilters.querySelector<HTMLInputElement>('input[name=searchTerm]')
+    if (searchInput) {
+      searchInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          this.searchEnemies(searchInput)
+        }
+      })
+    }
+    enemyFilters.querySelector('.search-button')?.addEventListener('click', () => {
+      if (searchInput) this.searchEnemies(searchInput)
     })
-    $enemyFilters.find('.race').on('change', (event) => {
-      const checkbox = event.currentTarget as HTMLInputElement
-      const raceName = $(checkbox).data().raceName
+    enemyFilters.querySelectorAll<HTMLInputElement>('.race').forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        const raceName = checkbox.dataset.raceName!
 
-      this.raceList[raceName] = checkbox.checked
-      if (checkbox.checked) {
-        this.selectedRaces[raceName] = true
-      } else {
-        delete this.selectedRaces[raceName]
-      }
+        this.raceList[raceName] = checkbox.checked
+        if (checkbox.checked) {
+          this.selectedRaces[raceName] = true
+        } else {
+          delete this.selectedRaces[raceName]
+        }
+      })
     })
-    $enemyFilters.find('.rank').on('change', (event) => {
-      const checkbox = event.currentTarget as HTMLInputElement
-      const rank = $(checkbox).data().rank
-      const rankName = $(checkbox).data().rankName
+    enemyFilters.querySelectorAll<HTMLInputElement>('.rank').forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        const rank = checkbox.dataset.rank!
+        const rankName = checkbox.dataset.rankName!
 
-      this.filters.ranks[rankName] = checkbox.checked
-      if (checkbox.checked) {
-        this.selectedRanks[rank] = true
-      } else {
-        delete this.selectedRanks[rank]
-      }
+        this.filters.ranks[rankName] = checkbox.checked
+        if (checkbox.checked) {
+          this.selectedRanks[rank] = true
+        } else {
+          delete this.selectedRanks[rank]
+        }
+      })
     })
   }
 

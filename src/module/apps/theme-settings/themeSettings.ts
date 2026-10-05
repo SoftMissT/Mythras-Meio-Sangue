@@ -1,7 +1,7 @@
-import { Theme } from "@apps/theme-settings/theme";
+import { Theme } from '@apps/theme-settings/theme'
 
 export class ThemeSettings implements Theme {
-  name: string;
+  name: string
 
   constructor(name: string) {
     this.name = name
@@ -17,10 +17,10 @@ export class ThemeSettings implements Theme {
 
   relabel(contextName: string, labelKey: string): string {
     // do nothing in default impl
-    return labelKey;
+    return labelKey
   }
 
   getCharacterActorTemplate(): string {
-    return 'systems/mythras/templates/actor/actor-sheet-mythras.hbs';
+    return 'systems/mythras/templates/actor/actor-sheet-mythras.hbs'
   }
 }

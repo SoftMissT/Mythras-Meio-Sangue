@@ -1,13 +1,15 @@
 import { ActorMythras } from '@actor'
 
-export class ItemMythras<TParent extends ActorMythras | null = ActorMythras | null> extends Item<TParent> {
+export class ItemMythras<
+  TParent extends ActorMythras | null = ActorMythras | null
+> extends Item<TParent> {
   get actorData() {
     return this.actor ? this.actor : undefined
   }
 
   override async _preCreate(data: any, options: any, user: any): Promise<void> {
     if (this._source.img === 'icons/svg/item-bag.svg') {
-      this._source.img = this.getItemImage(data.type);
+      this._source.img = this.getItemImage(data.type)
     }
   }
 
@@ -46,23 +48,24 @@ export class ItemMythras<TParent extends ActorMythras | null = ActorMythras | nu
       return ItemConstructor ? new ItemConstructor(data, context) : new ItemMythras(data, context)
     }
   }
-  
 }
 
 const ItemProxyMythras = new Proxy(ItemMythras, {
-  construct(
+    // ponytail: context tipado como `any` quebra a circularidade do
+    // DocumentConstructionContext<ActorMythras> (TS2615 em TokenSchema);
+    // subir para o tipo cheio se algum contexto precisar ser auditado
+    construct(
       _target,
-      // @ts-ignore: Weird circular reference error (does not break anything I think)
-      args: [source: PreCreate<foundry.documents.ItemSource>, context?: DocumentConstructionContext<ActorMythras | null>],
-  ) {
-      const source = args[0];
-      const type = source?.type as keyof typeof CONFIG.MYTHRAS.Item.documentClasses;
+      args: [source: PreCreate<foundry.documents.ItemSource>, context?: DocumentConstructionContext<any>]
+    ) {
+    const source = args[0]
+    const type = source?.type as keyof typeof CONFIG.MYTHRAS.Item.documentClasses
 
-      const ItemClass: typeof ItemMythras = CONFIG.MYTHRAS.Item.documentClasses[type];
-      if (!ItemClass) {
-          throw Error(`Item type ${type} does not exist and item module sub-types are not supported`);
-      }
-      return new ItemClass(...args);
-  },
-});
+    const ItemClass: typeof ItemMythras = CONFIG.MYTHRAS.Item.documentClasses[type]
+    if (!ItemClass) {
+      throw Error(`Item type ${type} does not exist and item module sub-types are not supported`)
+    }
+    return new ItemClass(...args)
+  }
+})
 export { ItemProxyMythras }

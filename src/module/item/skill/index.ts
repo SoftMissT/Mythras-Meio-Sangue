@@ -14,13 +14,14 @@ interface SkillMythras {
   readonly system: SkillData
 }
 
-class SkillMythras<TParent extends ActorMythras | null = ActorMythras  | null> extends ItemMythras<TParent> {
+class SkillMythras<
+  TParent extends ActorMythras | null = ActorMythras | null
+> extends ItemMythras<TParent> {
   isSkill: boolean = true
 
   override prepareData(): void {
     super.prepareData()
   }
-
 
   get encPenalty() {
     const data = this.system
@@ -65,7 +66,10 @@ class SkillMythras<TParent extends ActorMythras | null = ActorMythras  | null> e
   }
 
   private getCharacteristicValue(characteristicName?: CharacteristicOption) {
-    return characteristicName ? Number(this.actor.system.characteristics[characteristicName].value) + Number(this.actor.system.characteristics[characteristicName].mod) : 0
+    return characteristicName
+      ? Number(this.actor.system.characteristics[characteristicName].value) +
+          Number(this.actor.system.characteristics[characteristicName].mod)
+      : 0
   }
 }
 

@@ -12,7 +12,7 @@ div.equipment {
         &:hover {
           background-color: #840107;
           color: #fff;
-          
+
           input {
             color: #fff;
           }
@@ -22,7 +22,6 @@ div.equipment {
             option {
               background-color: #840107;
             }
-
           }
         }
         input {
@@ -32,16 +31,16 @@ div.equipment {
             height: 20px;
             border: none;
           }
-    
-          &[type="number"] {
+
+          &[type='number'] {
             -webkit-appearance: auto; /* For Chrome, Safari, and Edge */
             appearance: auto;
             width: 60px;
             padding-left: 15px;
           }
-    
-          &[type="number"]::-webkit-inner-spin-button,
-          &[type="number"]::-webkit-outer-spin-button {
+
+          &[type='number']::-webkit-inner-spin-button,
+          &[type='number']::-webkit-outer-spin-button {
             -webkit-appearance: auto; /* For WebKit browsers */
             margin: 0;
           }
@@ -130,7 +129,7 @@ div.equipment {
   #equipmentFilter:focus {
     box-shadow: none;
   }
-  .equipment-table {    
+  .equipment-table {
     .item {
       display: none;
     }

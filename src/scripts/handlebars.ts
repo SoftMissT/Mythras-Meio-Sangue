@@ -1,4 +1,4 @@
-import { ItemMythras } from "@module/item/base"
+import { ItemMythras } from '@module/item/base'
 
 export function registerHandlebarsHelpers() {
   Handlebars.registerHelper('localizeSkillAbbrev', function (str) {
@@ -29,19 +29,19 @@ export function registerHandlebarsHelpers() {
     }).format(num)
   })
 
-  Handlebars.registerHelper('multiply', function(numA, numB, maxDecimalPlaces) {
+  Handlebars.registerHelper('multiply', function (numA, numB, maxDecimalPlaces) {
     // If only two arguments were passed, maxDecimalPlaces will be the options object.
     if (typeof maxDecimalPlaces === 'object' && maxDecimalPlaces !== null) {
-      maxDecimalPlaces = 2;
+      maxDecimalPlaces = 2
     }
-  
-    const product = numA * numB;
+
+    const product = numA * numB
     return new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: maxDecimalPlaces
-    }).format(product);
-  });
-  
+    }).format(product)
+  })
+
   Handlebars.registerHelper('ifeq', function (a, b, options) {
     if (a == b) {
       return options.fn(this)

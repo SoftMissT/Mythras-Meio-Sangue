@@ -4,7 +4,13 @@
   </h2>
   <div>
     <div class="desc" data-group="primary" data-tab="notes">
-      {{ editor system.journal target="system.journal" button=true editable=editable engine="prosemirror" }}
+      {{#if editable}}
+      <prose-mirror name="system.journal" button="true" editable="{{editable}}" toggled="false" value="{{system.journal}}">
+        {{{journalHTML}}}
+      </prose-mirror>
+      {{else}}
+      {{{journalHTML}}}
+      {{/if}}
     </div>
   </div>
 </div>

@@ -1,8 +1,8 @@
-<form class="{{cssClass}} char-sheet flexcol" autocomplete="off">
+<div class="char-sheet flexcol">
   {{!-- Sheet Header --}}
   <header class="sheet-header actor-sheet-header">
     <div class="header-personal">
-      <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" /> 
+      <img class="profile-img" src="{{actor.img}}" data-action="editImage" data-field="img" title="{{actor.name}}" height="100" width="100" /> 
       <div class="names">
         <input class="char-name" name="name" type="text" value="{{actor.name}}" placeholder="" />
         <p class="input-label">{{localize 'MYTHRAS.CHARACTER_NAME'}}</p>
@@ -39,4 +39,4 @@
 
   {{!-- Decorative Symbol Divider --}}
   {{> systems/mythras/templates/global/mythras-symbols.hbs}}
-</form>
+</div>

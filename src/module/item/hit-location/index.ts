@@ -16,11 +16,16 @@ interface HitLocationMythras {
   readonly system: HitLocationData
 }
 
-class HitLocationMythras<TParent extends ActorMythras | null = ActorMythras  | null> extends ItemMythras<TParent> {
+class HitLocationMythras<
+  TParent extends ActorMythras | null = ActorMythras | null
+> extends ItemMythras<TParent> {
   get attachedArmor(): ArmorMythras[] {
     //@ts-ignore
     return this.actor.items.filter((value: ItemMythras<TParent>) => {
-      return value.type === 'armor' && (value as ArmorMythras<TParent>).selectedHitLocationId.includes(this.id)
+      return (
+        value.type === 'armor' &&
+        (value as ArmorMythras<TParent>).selectedHitLocationId.includes(this.id)
+      )
     })
   }
 
@@ -48,13 +53,13 @@ class HitLocationMythras<TParent extends ActorMythras | null = ActorMythras  | n
     return this.system.naturalArmor
   }
 
-get totalAp() {
-  let equippedArmorAp = this.equippedArmor
-    .map((armor) => armor.ap)
-    .reduce((previousAp, currentAp) => Math.max(previousAp, currentAp), 0)
-  
-  return equippedArmorAp + Number(this.naturalArmor)
-}
+  get totalAp() {
+    let equippedArmorAp = this.equippedArmor
+      .map((armor) => armor.ap)
+      .reduce((previousAp, currentAp) => Math.max(previousAp, currentAp), 0)
+
+    return equippedArmorAp + Number(this.naturalArmor)
+  }
 
   get maxHp() {
     const system = foundry.utils.deepClone(this.system)

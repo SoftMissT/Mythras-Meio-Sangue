@@ -1,8 +1,8 @@
 import { ItemMythras } from '@item/base'
 import type { StorageMythras } from '@item/storage'
 import { itemIsStorageType } from '@item/type-guards'
-import { HitLocationMythras } from "@item/hit-location";
-import { ActorMythras } from '@module/actor';
+import { HitLocationMythras } from '@item/hit-location'
+import { ActorMythras } from '@module/actor'
 
 interface PhysicalItemData {
   encumbrance: number
@@ -15,7 +15,9 @@ interface PhysicalItemMythras {
   readonly system: PhysicalItemData
 }
 
-abstract class PhysicalItemMythras<TParent extends ActorMythras | null = ActorMythras  | null> extends ItemMythras<TParent> {
+abstract class PhysicalItemMythras<
+  TParent extends ActorMythras | null = ActorMythras | null
+> extends ItemMythras<TParent> {
   isPhysical: boolean = true
 
   get availableStorage() {
@@ -81,8 +83,9 @@ abstract class PhysicalItemMythras<TParent extends ActorMythras | null = ActorMy
   get availableHitLocations(): HitLocationMythras[] {
     if (this.actorData) {
       //@ts-ignore
-      let availableHitLocations: HitLocationMythras[] = this.actorData.items
-        .filter((value: Item) => value.type === 'hitLocation')
+      let availableHitLocations: HitLocationMythras[] = this.actorData.items.filter(
+        (value: Item) => value.type === 'hitLocation'
+      )
       availableHitLocations.sort((a: HitLocationMythras, b: HitLocationMythras) => {
         return a.system.rollRangeStart - b.system.rollRangeStart
       })

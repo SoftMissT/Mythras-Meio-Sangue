@@ -1,4 +1,4 @@
-import { ActorMythras } from "@module/actor"
+import { ActorMythras } from '@module/actor'
 
 export class EncounterGeneratorActorBuilder {
   public async createActor(skollEnemy: any, folder: string) {
@@ -338,7 +338,5 @@ export class EncounterGeneratorActorBuilder {
     })
   }
 
-  public parseAbilites() {
-
-  }
+  public parseAbilites() {}
 }

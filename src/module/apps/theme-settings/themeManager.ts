@@ -1,6 +1,6 @@
-import { ThemeSettings } from "@apps/theme-settings/themeSettings";
-import { MSpaceThemeSettings } from "@apps/theme-settings/MSpaceThemeSettings";
-import { Theme } from "@apps/theme-settings/theme";
+import { ThemeSettings } from '@apps/theme-settings/themeSettings'
+import { MSpaceThemeSettings } from '@apps/theme-settings/MSpaceThemeSettings'
+import { Theme } from '@apps/theme-settings/theme'
 
 /**
  * Convenient way to access global setting regarding game theme.
@@ -11,8 +11,8 @@ export class ThemeManager {
   M_SPACE: Theme
 
   constructor() {
-    this.MYTHRAS_CLASSIC = new ThemeSettings("SETTINGS.gameThemeMythras");
-    this.M_SPACE = new MSpaceThemeSettings();
+    this.MYTHRAS_CLASSIC = new ThemeSettings('SETTINGS.gameThemeMythras')
+    this.M_SPACE = new MSpaceThemeSettings()
   }
 
   getThemeChoices(): Record<string, unknown> {
@@ -27,7 +27,7 @@ export class ThemeManager {
   }
 
   getTheme(): Theme {
-    switch (game.settings.get("mythras", "gameTheme")) {
+    switch (game.settings.get('mythras', 'gameTheme')) {
       case 'mythras_space':
         return this.M_SPACE
       default:
@@ -37,29 +37,29 @@ export class ThemeManager {
 
   getThemeName(): string {
     // @ts-ignore
-    return game.settings.get("mythras", "gameTheme");
+    return game.settings.get('mythras', 'gameTheme')
   }
 
   onReady() {
-    game.settings.register("mythras", "gameTheme", {
-      name: "SETTINGS.gameThemeName",
-      hint: "SETTINGS.gameThemeHint",
-      scope: "world",
+    game.settings.register('mythras', 'gameTheme', {
+      name: 'SETTINGS.gameThemeName',
+      hint: 'SETTINGS.gameThemeHint',
+      scope: 'world',
       config: true,
-      default: "mythras",
+      default: 'mythras',
       type: String,
       choices: this.getThemeChoices(),
-      onChange: value => {
+      onChange: (value) => {
         this.onThemeChange(value)
       }
-    });
-    console.log("Mythras | Theme settings available. Active theme: " + this.getThemeName())
-    this.getTheme().registerThemeSpecificSheetClasses();
+    })
+    console.log('Mythras | Theme settings available. Active theme: ' + this.getThemeName())
+    this.getTheme().registerThemeSpecificSheetClasses()
   }
 
   onThemeChange(value: string) {
-    console.log("Mythras | Changing theme to: " + value)
-    this.getTheme().registerThemeSpecificSheetClasses();
+    console.log('Mythras | Changing theme to: ' + value)
+    this.getTheme().registerThemeSpecificSheetClasses()
     // ToDo find a way to hide existing items which shouldn't exist in selected theme.
     //ItemSheetClassRegistry.unregisterThemeSpecificSheetClasses(this.getTheme())
     // in the future also do same with ActorSheetClassRegistry

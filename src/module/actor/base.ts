@@ -7,9 +7,7 @@ import { ActorMythrasFatigue } from './fatigue'
 import { ActorMythrasMovement } from './movement'
 import { ActorMythrasStatTracker } from './stat-tracker'
 import { TokenDocumentMythras } from '@module/scene/token-document/document'
-import { type SkillMythras } from '@item/skill'; // Type-only import to avoid circular reference.
-
-
+import { type SkillMythras } from '@item/skill' // Type-only import to avoid circular reference.
 
 interface ActorData {
   initiativeBonus: number
@@ -25,12 +23,13 @@ interface ActorMythras {
   readonly system: ActorData
 }
 
-
 /**
  * Mythras Actor object. Contains logic for preparing dynamic data on the sheet.
  * @extends {Actor}
  */
-class ActorMythras<TParent extends TokenDocumentMythras | null = TokenDocumentMythras | null> extends Actor<TParent> {
+class ActorMythras<
+  TParent extends TokenDocumentMythras | null = TokenDocumentMythras | null
+> extends Actor<TParent> {
   public encumbrance!: ActorMythrasEncumbrance
   public fatigue!: ActorMythrasFatigue
   public movement!: ActorMythrasMovement
@@ -49,7 +48,7 @@ class ActorMythras<TParent extends TokenDocumentMythras | null = TokenDocumentMy
         : new ActorMythras(data, context)
     }
   }
-  override get itemTypes(){
+  override get itemTypes() {
     return super.itemTypes as ItemTypeMap
   }
   // Attribute getters
@@ -93,7 +92,11 @@ class ActorMythras<TParent extends TokenDocumentMythras | null = TokenDocumentMy
 
   get initiativeBonus() {
     let base = Math.ceil((this.characteristics.int + this.characteristics.dex) / 2)
-    let initiativeBonus = base + this.attributeMiscMods.initiativeBonus + this.fatigue.currentLevel.initiativePenalty(base) - this.armorPenalty
+    let initiativeBonus =
+      base +
+      this.attributeMiscMods.initiativeBonus +
+      this.fatigue.currentLevel.initiativePenalty(base) -
+      this.armorPenalty
     return initiativeBonus
   }
 
@@ -116,14 +119,14 @@ class ActorMythras<TParent extends TokenDocumentMythras | null = TokenDocumentMy
       'combatStyle',
       'magicSkill',
       'passion'
-    ];
+    ]
 
-    return skillTypes.flatMap(t => {
+    return skillTypes.flatMap((t) => {
       return this.items
-        .filter(i => i.type === t)
-        .map(i => i as unknown as SkillMythras)
-        .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
-    });
+        .filter((i) => i.type === t)
+        .map((i) => i as unknown as SkillMythras)
+        .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }))
+    })
   }
 
   // Actor attribute misc modifier convenience getter
@@ -165,10 +168,6 @@ class ActorMythras<TParent extends TokenDocumentMythras | null = TokenDocumentMy
       cha: Number(this.system.characteristics.cha.value) + this.characteristicsMod.cha
     }
   }
-
-  // static override async create(data: any, context: any): Promise<any> {
-  //   return super.create(data, context)
-  // }
 
   prepareData() {
     super.prepareData()
@@ -232,8 +231,7 @@ class ActorMythras<TParent extends TokenDocumentMythras | null = TokenDocumentMy
 
 type ItemType = keyof typeof MYTHRASCONFIG.Item.documentClasses
 type ItemTypeMap = {
-  [K in ItemType]: InstanceType<ConfigMythras["MYTHRAS"]["Item"]["documentClasses"][K]>[];
-
-};
+  [K in ItemType]: InstanceType<ConfigMythras['MYTHRAS']['Item']['documentClasses'][K]>[]
+}
 
 export { ActorData, ActorMythras }

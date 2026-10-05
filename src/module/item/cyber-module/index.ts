@@ -16,11 +16,17 @@ interface CyberModuleMythras {
   readonly system: CyberModuleData
 }
 
-class CyberModuleMythras<TParent extends ActorMythras | null = ActorMythras  | null> extends PhysicalItemMythras<TParent> {
+class CyberModuleMythras<
+  TParent extends ActorMythras | null = ActorMythras | null
+> extends PhysicalItemMythras<TParent> {
   isCyberModule: boolean = true
 
-  get cyberModuleAvailibilityLabels(): Array<{value: string; label: string}> {
-    return [{ value: "common", label: "MYTHRAS.Common" }, { value: "rare", label: "MYTHRAS.Rare" }, { value: "classified", label: "MYTHRAS.Classified" }];
+  get cyberModuleAvailibilityLabels(): Array<{ value: string; label: string }> {
+    return [
+      { value: 'common', label: 'MYTHRAS.Common' },
+      { value: 'rare', label: 'MYTHRAS.Rare' },
+      { value: 'classified', label: 'MYTHRAS.Classified' }
+    ]
   }
 
   getInstallLocationName(installLocationId: string): string {
@@ -31,7 +37,7 @@ class CyberModuleMythras<TParent extends ActorMythras | null = ActorMythras  | n
         }
       }
     }
-    return "Unequipped"
+    return 'Unequipped'
   }
 
   override async _onCreate(data: any, options: any, userId: any): Promise<void> {

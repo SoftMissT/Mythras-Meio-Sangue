@@ -28,10 +28,16 @@ nav.sheet-tabs {
     text-shadow: none;
   }
 
+  a:focus-visible {
+    outline: none;
+    box-shadow: colors.$sheet-focus-ring;
+    border-radius: 2px;
+  }
+
   a:after {
     display: block;
     content: '';
-    border-bottom: solid 1px #333;
+    border-bottom: solid 1px colors.$sheet-dark-crimson;
     transform: scaleX(0);
     transition: transform 150ms ease-in-out;
   }

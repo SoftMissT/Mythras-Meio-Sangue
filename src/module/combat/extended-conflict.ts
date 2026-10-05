@@ -1,5 +1,4 @@
 export class ExtendedConflict extends Combat {
-
   /**
    * Determine initial conflict pools and save as flag
    * save name of skill to roll for displaying
@@ -16,20 +15,18 @@ export class ExtendedConflict extends Combat {
    *  https://foundryvtt.wiki/en/development/guides/understanding-form-applications
    */
 
-
   setInitiative(id: string, value: number): Promise<void> {
-    return super.setInitiative(id, value);
+    return super.setInitiative(id, value)
   }
-  get conflictPool(): number{
-    let poolval= this.getFlag("mythras", "conflictPool")
-    return <number>poolval;
+  get conflictPool(): number {
+    let poolval = this.getFlag('mythras', 'conflictPool')
+    return <number>poolval
   }
 
   async nextRound() {
-    if ( this.conflictPool === 1 ) {
-      await this.setFlag("mythras", "conflictPool", 1);
+    if (this.conflictPool === 1) {
+      await this.setFlag('mythras', 'conflictPool', 1)
     }
     return super.nextRound()
   }
-
 }

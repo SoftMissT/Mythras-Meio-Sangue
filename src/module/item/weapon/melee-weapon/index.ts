@@ -11,7 +11,9 @@ interface MeleeWeaponMythras {
   readonly system: MeleeWeaponData
 }
 
-class MeleeWeaponMythras<TParent extends ActorMythras | null = ActorMythras  | null> extends  WeaponMythras<TParent> {
+class MeleeWeaponMythras<
+  TParent extends ActorMythras | null = ActorMythras | null
+> extends WeaponMythras<TParent> {
   get traits() {
     return this.system.traits
   }

@@ -13,11 +13,13 @@ interface ArmorMythras {
   readonly system: ArmorData
 }
 
-class ArmorMythras<TParent extends ActorMythras | null = ActorMythras  | null> extends PhysicalItemMythras<TParent> {
+class ArmorMythras<
+  TParent extends ActorMythras | null = ActorMythras | null
+> extends PhysicalItemMythras<TParent> {
   isArmor: boolean = true
 
   get selectedHitLocationId() {
-        return this.system.location
+    return this.system.location
   }
 
   get ap() {
@@ -29,7 +31,7 @@ class ArmorMythras<TParent extends ActorMythras | null = ActorMythras  | null> e
   }
 
   override async _preCreate(data: any, options: any, user: any): Promise<void> {
-    super._preCreate(data,options,user)
+    super._preCreate(data, options, user)
     if (this.actorData) {
       this.linkHitLocation(data.system)
     }
@@ -69,12 +71,12 @@ class ArmorMythras<TParent extends ActorMythras | null = ActorMythras  | null> e
     let availableHitLocations: HitLocationMythras[] = this.availableHitLocations
     //Do we need to set this here? It should be set in the item as created
     //if it is not set, it is blank
-    systemData.locationName = [availableHitLocations[0].name]//why??
+    systemData.locationName = [availableHitLocations[0].name] //why??
     if (systemData.location?.includes('Unequipped') && systemData.locationName.length > 0) {
       let hitlocID = availableHitLocations.filter(function (value: Item) {
-        return systemData.locationName.includes(value.name)//modified to return all hit locations
+        return systemData.locationName.includes(value.name) //modified to return all hit locations
       })
-      systemData.location = hitlocID.map(({ id }) => id)//hitlocID[0].id
+      systemData.location = hitlocID.map(({ id }) => id) //hitlocID[0].id
     }
 
     let hitLocName = availableHitLocations.filter(function (value: Item) {

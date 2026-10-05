@@ -16,7 +16,9 @@ interface CultBrotherhoodMythras {
   readonly system: CultBrotherhoodData
 }
 
-class CultBrotherhoodMythras<TParent extends ActorMythras | null = ActorMythras  | null> extends ItemMythras<TParent> {
+class CultBrotherhoodMythras<
+  TParent extends ActorMythras | null = ActorMythras | null
+> extends ItemMythras<TParent> {
   isCultBrotherhood: boolean = true
   override prepareData(): void {
     super.prepareData()

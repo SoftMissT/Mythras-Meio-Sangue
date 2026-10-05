@@ -8,5 +8,11 @@ $sheet-warning: #e1a100;
 
 $transparent-black: rgba(0, 0, 0, 0.5);
 
+// Escala de superfície (Passo 8a)
+$sheet-focus: #ff9065;
+$sheet-focus-ring: 0 0 0 2px #fff, 0 0 0 4px #2a0000;
+$sheet-radius: 3px;
+$sheet-transition: 120ms ease;
+
 $sheet-header-color: $sheet-darker-crimson;
 $sheet-scrollbar-color: $sheet-dark-crimson;

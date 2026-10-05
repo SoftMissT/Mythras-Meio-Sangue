@@ -6,13 +6,13 @@ import { registerTemplates } from '@scripts/register-templates'
 import { MYTHRASCONFIG } from '@scripts/config'
 import { ItemMythras, ItemProxyMythras } from '@item/base'
 import { SetGameMythras } from '@scripts/set-game-mythras'
-import { ActorSheetClassRegistry } from "@actor/ActorSheetClassRegistry";
-import { ItemSheetClassRegistry } from "@item/ItemSheetClassRegistry";
+import { ActorSheetClassRegistry } from '@actor/ActorSheetClassRegistry'
+import { ItemSheetClassRegistry } from '@item/ItemSheetClassRegistry'
 
 export const Init = {
   listen: (): void => {
     Hooks.once('init', function () {
-      console.log(`Mythras | Initializing the Mythras Game System`);
+      console.log(`Mythras | Initializing the Mythras Game System`)
       CONFIG.MYTHRAS = MYTHRASCONFIG
       // Define custom Entity classes
       CONFIG.Actor.documentClass = ActorMythras
@@ -21,9 +21,6 @@ export const Init = {
       ItemSheetClassRegistry.registerSheetClasses()
       CONFIG.Combat.documentClass = CombatMythras
       CONFIG.ui.combat = MythrasCombatTracker as any
-      //TODO: Figure out how to use the active effects class for further Mythras customization
-      //CONFIG.ActiveEffect.documentClass = ActiveEffectMythras
-
 
       // Set an initiative formula for the system
       CONFIG.Combat.initiative = {
@@ -41,29 +38,29 @@ export const Init = {
       registerTemplates()
 
       // Set up custom Mythras combat setting
-      game.settings.register("mythras", "combat.reduceAp", {
-        name: "Automatically Reduce AP?",
+      game.settings.register('mythras', 'combat.reduceAp', {
+        name: 'Automatically Reduce AP?',
         hint: "Automatically reduce Action Points when a combatant's turn is passed?",
-        scope: "world",
+        scope: 'world',
         config: true,
         default: false,
-        type: Boolean,
-      });
+        type: Boolean
+      })
 
-      game.settings.register("mythras", "debugging", {
-        name: "Debugging Mode",
-        hint: "Enables additional debug logging.",
-        scope: "world",
+      game.settings.register('mythras', 'debugging', {
+        name: 'Debugging Mode',
+        hint: 'Enables additional debug logging.',
+        scope: 'world',
         config: true,
         default: false,
-        type: Boolean,
-      });
+        type: Boolean
+      })
 
       SetGameMythras.onInit()
     })
 
     Hooks.on('updateCombatant', function (combatant) {
-      if (game.settings.get("mythras", "debugging")) {
+      if (game.settings.get('mythras', 'debugging')) {
         console.log(combatant)
       }
     })

@@ -7,12 +7,12 @@ export abstract class EncounterGeneratorImporter {
     this.actorBuilder = new EncounterGeneratorActorBuilder()
   }
 
-  get $templateList() {
-    return this.element.find(this.rowListElementSelector)
+  get templateList(): HTMLElement {
+    return this.element.querySelector<HTMLElement>(this.rowListElementSelector)!
   }
 
-  get element() {
-    return this.encounterGenerator.element.find(`.${this.tabName}`)
+  get element(): HTMLElement {
+    return this.encounterGenerator.element.querySelector<HTMLElement>(`.${this.tabName}`)!
   }
 
   protected actorBuilder: EncounterGeneratorActorBuilder
@@ -46,7 +46,7 @@ export abstract class EncounterGeneratorImporter {
   protected filterListLastScrollTops: any = {}
 
   public render() {
-    this.$templateList.scrollTop(this.lastScrollTop)
+    this.templateList.scrollTop = this.lastScrollTop
     if (!this.dataReady) {
       this.getTemplatesPage()
     }
@@ -61,11 +61,11 @@ export abstract class EncounterGeneratorImporter {
   }
 
   public activateListeners() {
-    this.$templateList.on('scroll', async (event) => {
+    this.templateList.addEventListener('scroll', async (event) => {
       if (this.scrollLimit >= this.totalFilteredCount) {
         return
       }
-      const target = event.currentTarget
+      const target = event.currentTarget as HTMLElement
       if (target.scrollTop + target.clientHeight === target.scrollHeight) {
         const currentValue = this.scrollLimit
         const maxValue = this.totalTemplateCount ?? 0
@@ -81,48 +81,55 @@ export abstract class EncounterGeneratorImporter {
       }
     })
 
-    this.element.find('.advanced-filters-button').on('click', (event) => {
-      this.showAdvancedFilters = !this.showAdvancedFilters
-      this.toggleFilterSection()
+    this.element
+      .querySelector('.advanced-filters-button')
+      ?.addEventListener('click', (_event) => {
+        this.showAdvancedFilters = !this.showAdvancedFilters
+        this.toggleFilterSection()
+      })
+    this.element.querySelectorAll<HTMLInputElement>('.tag').forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        const tagName = checkbox.dataset.tagName!
+        this.tagList[tagName] = checkbox.checked
+        if (checkbox.checked) {
+          this.selectedTags[tagName] = true
+        } else {
+          delete this.selectedTags[tagName]
+        }
+      })
     })
-    this.element.find('.tag').on('change', (event) => {
-      const checkbox = event.currentTarget as HTMLInputElement
-      const tagName = $(checkbox).data().tagName
-
-      this.tagList[tagName] = checkbox.checked
-      if (checkbox.checked) {
-        this.selectedTags[tagName] = true
-      } else {
-        delete this.selectedTags[tagName]
-      }
-    })
-    this.element.find('.owner').on('change', (event) => {
-      const checkbox = event.currentTarget as HTMLInputElement
-      const ownerName = $(checkbox).data().ownerName
-
-      this.ownerList[ownerName] = checkbox.checked
-      if (checkbox.checked) {
-        this.selectedOwners[ownerName] = true
-      } else {
-        delete this.selectedOwners[ownerName]
-      }
+    this.element.querySelectorAll<HTMLInputElement>('.owner').forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        const ownerName = checkbox.dataset.ownerName!
+        this.ownerList[ownerName] = checkbox.checked
+        if (checkbox.checked) {
+          this.selectedOwners[ownerName] = true
+        } else {
+          delete this.selectedOwners[ownerName]
+        }
+      })
     })
   }
 
   private scrollFilterLists() {
-    Object.keys(this.filterListLastScrollTops).forEach((listName) => {
-      this.element
-        .find(`[data-filter-list=${listName}]`)
-        .scrollTop(this.filterListLastScrollTops[listName])
-    })
+    this.element
+      .querySelectorAll<HTMLElement>('[data-filter-list]')
+      .forEach((list) => {
+        const listName = list.dataset.filterList!
+        if (this.filterListLastScrollTops[listName] !== undefined) {
+          list.scrollTop = this.filterListLastScrollTops[listName]
+        }
+      })
   }
 
   private toggleFilterSection() {
+    const section = this.element.querySelector<HTMLElement>('.advanced-filters-section')
+    if (!section) return
     if (this.showAdvancedFilters) {
-      this.element.find('.advanced-filters-section').show()
+      section.style.display = ''
       this.scrollFilterLists()
     } else {
-      this.element.find('.advanced-filters-section').hide()
+      section.style.display = 'none'
     }
   }
 

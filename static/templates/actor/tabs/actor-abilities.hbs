@@ -36,7 +36,7 @@
           </thead>
           <tbody>
             {{#each items.magicSkill as |item id|}}
-            <tr class="item" data-item-id="{{item.id}}">
+            <tr class="item draggable" data-item-id="{{item.id}}">
               <td>
                 <a class="item-name item-control item-edit">
                   {{item.name}}
@@ -119,7 +119,7 @@
               </thead>
               <tbody>
                 {{#each items.spell as |item id|}}
-                <tr class="item active" data-item data-item-id="{{item.id}}" data-item-source="{{item.magicSkillName}}">
+                <tr class="item active draggable" data-item data-item-id="{{item.id}}" data-item-source="{{item.magicSkillName}}">
                   <td class="item-profile">
                     <img class="item-img" src="{{item.img}}">
                     <a class="item-name item-control item-edit">
@@ -146,7 +146,13 @@
             <h3>
               {{localize 'MYTHRAS.Abilities'}}
             </h3>
-            {{ editor abilitiesDesc target="system.abilitiesDesc" button=true editable=editable engine="prosemirror" }}
+            {{#if editable}}
+              <prose-mirror name="system.abilitiesDesc" button="true" editable="{{editable}}" toggled="false" value="{{system.abilitiesDesc}}">
+                {{{abilitiesDesc}}}
+              </prose-mirror>
+              {{else}}
+              {{{abilitiesDesc}}}
+              {{/if}}
           </div>
         </div>
       </div>

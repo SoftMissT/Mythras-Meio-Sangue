@@ -52,7 +52,10 @@ type TokenSchema = {
      * The ActorDelta embedded document which stores the differences between this token and the base actor it
      * represents.
      */
-    delta: ActorDeltaField<documents.BaseActorDelta<BaseToken>>;
+    // ponytail: ActorDeltaField inferido aqui dispara TS2615 (ciclo em
+    // SourceFromSchema<TokenSchema>); EmbeddedDataField direto com os mesmos
+    // parâmetros de nulidade resolve sem mudar o _source resultante
+    delta: fields.EmbeddedDataField<documents.BaseActorDelta<BaseToken>, true, true, true>;
     appendNumber: fields.BooleanField;
     prependAdjective: fields.BooleanField;
     /** The width of the Token in grid units */
@@ -150,13 +153,3 @@ type TokenSchema = {
 };
 
 export type TokenSource = SourceFromSchema<TokenSchema>;
-
-declare class ActorDeltaField<
-    TDocument extends documents.BaseActorDelta<BaseToken> = documents.BaseActorDelta<BaseToken>,
-> extends fields.EmbeddedDocumentField<TDocument> {
-    override initialize(
-        value: fields.MaybeSchemaProp<TDocument["_source"], true, true, true>,
-        model?: ConstructorOf<TDocument>,
-        options?: object,
-    ): fields.MaybeSchemaProp<TDocument, true, true, true>;
-}

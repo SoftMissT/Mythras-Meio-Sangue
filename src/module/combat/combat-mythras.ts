@@ -19,7 +19,7 @@ export class CombatMythras extends Combat {
   async nextTurn() {
     let turn = this.turn
     let skip = this.settings.skipDefeated
-    let reduceAp = game.settings.get("mythras", "combat.reduceAp")
+    let reduceAp = game.settings.get('mythras', 'combat.reduceAp')
     let newMTurn: number = this.getFlag('mythras', 'cycle') as number
     let l = this.turns.length
     if (turn == l - 1) {
@@ -31,13 +31,7 @@ export class CombatMythras extends Combat {
       let next = (turn + i + 1) % l
       let t = this.turns[next]
       if (t.defeated && skip) continue
-      if (
-        t.actor?.effects.find(
-          (e) => e.name === "Dead"
-        ) &&
-        skip
-      )
-        continue
+      if (t.actor?.effects.find((e) => e.name === 'Dead') && skip) continue
 
       const turnSystemData = t.actor?.system as any
       if (turnSystemData.trackedStats.actionPoints.value < 1) continue

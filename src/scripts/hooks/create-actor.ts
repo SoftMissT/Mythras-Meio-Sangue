@@ -5,7 +5,7 @@ export const CreateActor = {
   listen: (): void => {
     Hooks.on('createActor', (actor: ActorMythras, options, userID, x, y) => {
       if (actor.items.size == 0 && userID === game.user.id) {
-        // Hit Locations 
+        // Hit Locations
         game.packs
           .get('mythras.humanoidHitLocations')
           .getDocuments()
@@ -20,7 +20,7 @@ export const CreateActor = {
               hitLocArray.push(hitLoc)
             })
             actor.createEmbeddedDocuments('Item', hitLocArray)
-          })        
+          })
         // Standard Skills
         game.packs
           .get('mythras.standardSkill')
@@ -38,8 +38,6 @@ export const CreateActor = {
             })
             actor.createEmbeddedDocuments('Item', skillArray)
           })
-
-        
       }
     })
   }

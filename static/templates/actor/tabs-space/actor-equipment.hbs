@@ -19,7 +19,7 @@
             </thead>
             <tbody>
               {{#each items.storage as |item id|}}
-              <tr class="item" data-item data-item-id="{{ item.id }}">
+              <tr class="item draggable" data-item data-item-id="{{ item.id }}">
                 <td class="item-profile">
                   <img class="item-img" src="{{item.img}}">
                   <a class="item-name item-control item-edit">{{item.name}}</a>
@@ -58,7 +58,7 @@
             </thead>
             <tbody>
               {{#each items.currency as |item id|}}
-              <tr class="item" data-item data-item-id="{{item.id}}">
+              <tr class="item draggable" data-item data-item-id="{{item.id}}">
                 <td class="item-profile">
                   <img class="item-img" src="{{item.img}}">
                   <a class="item-name item-control item-edit">{{item.name}}</a>
@@ -70,7 +70,7 @@
                   {{item.system.encumbrance}}
                 </td>
                 <td>
-                  <input data-item-property="quantity" class="item-quantity" type="number" name="system.quantity" value="{{item.system.quantity}}" step="1" min="0" />
+                  <input data-item-property="quantity" class="item-quantity" type="number" value="{{item.system.quantity}}" step="1" min="0" />
                 </td>
                 <td>
                   <a class="item-control item-delete delete-column" title="Delete Item"><i class="fas fa-trash"></i></a>
@@ -98,7 +98,7 @@
         </thead>
         <tbody>
           {{#each items.equipment as |item id|}}
-          <tr class="item" data-item data-item-id="{{item.id}}" data-item-type="{{item.system.equipmentType}}" data-item-name="{{item.name}}">
+          <tr class="item draggable" data-item data-item-id="{{item.id}}" data-item-type="{{item.system.equipmentType}}" data-item-name="{{item.name}}">
             <td class="item-profile">
               <img class="item-img" src="{{item.img}}">
               <a class="item-name item-control item-edit">{{item.name}}</a>
@@ -142,7 +142,7 @@
         </thead>
         <tbody>
           {{#each items.cyberModule as |item id|}}
-          <tr class="item" data-item data-item-id="{{item.id}}">
+          <tr class="item draggable" data-item data-item-id="{{item.id}}">
             <td class="item-profile">
               <img class="item-img" src="{{item.img}}">
               <a class="item-name item-control item-edit">{{item.name}}</a>
@@ -187,7 +187,7 @@
         </thead>
         <tbody>
           {{#each items.armor as |item id|}}
-          <tr class="item" data-item data-item-id="{{ item.id }}">
+          <tr class="item draggable" data-item data-item-id="{{ item.id }}">
             <td class="item-profile">
               <img class="item-img" src="{{item.img}}">
               <a class="item-name item-control item-edit">{{item.name}}</a>
@@ -235,7 +235,7 @@
         </thead>
         <tbody>
           {{#each items.[ranged-weapon] as |item id|}}
-          <tr class="item" data-item data-item-id="{{item.id}}">
+          <tr class="item draggable" data-item data-item-id="{{item.id}}">
             <td class="item-profile">
               <img class="item-img" src="{{item.img}}">
               <a class="item-name item-control item-edit">{{item.name}}</a>
@@ -246,7 +246,7 @@
               </a>
             </td>
             <td>
-              <input data-item-property="damageModifier" type="checkbox" name="system.damageModifier" {{checked
+              <input data-item-property="damageModifier" type="checkbox" {{checked
                 system.damageModifier}} />
             </td>
             <td>
@@ -288,7 +288,7 @@
         </thead>
         <tbody>
         {{#each items.[melee-weapon] as |item id|}}
-          <tr class="item" data-item data-item-id="{{item.id}}">
+          <tr class="item draggable" data-item data-item-id="{{item.id}}">
             <td class="item-profile">
               <img class="item-img" src="{{item.img}}">
               <a class="item-name item-control item-edit">{{item.name}}</a>
@@ -299,7 +299,7 @@
               </a>
             </td>
             <td>
-              <input data-item-property="damageModifier" type="checkbox" name="system.damageModifier" {{checked
+              <input data-item-property="damageModifier" type="checkbox" {{checked
                 system.damageModifier}} />
             </td>
             <td>

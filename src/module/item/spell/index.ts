@@ -13,7 +13,9 @@ interface SpellMythras {
   readonly system: SpellData
 }
 
-class SpellMythras<TParent extends ActorMythras | null = ActorMythras  | null> extends ItemMythras<TParent> {
+class SpellMythras<
+  TParent extends ActorMythras | null = ActorMythras | null
+> extends ItemMythras<TParent> {
   get availableMagicSkills(): MagicSkillMythras[] {
     if (this.actorData) {
       return this.actor.itemTypes.magicSkill

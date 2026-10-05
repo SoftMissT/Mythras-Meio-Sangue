@@ -1,6 +1,2 @@
-
-class SceneMythras extends Scene {
-
-
-}
-export{SceneMythras}
+class SceneMythras extends Scene {}
+export { SceneMythras }

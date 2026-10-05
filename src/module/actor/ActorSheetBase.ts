@@ -1,6 +1,4 @@
-/* global $ */
 import { ActorData, ActorMythras } from '@actor/base'
-import { ItemMythras } from '@item/base'
 import { HitLocationMythras } from '@item/hit-location'
 import { CultBrotherhoodMythras } from '@item/cult-brotherhood'
 import { MagicSkillMythras } from '@item/magic-skill'
@@ -9,75 +7,94 @@ import { SpellMythras } from '@item/spell'
 import { StorageMythras } from '@item/storage'
 import { Roller } from '@module/roller'
 import { SheetPostRender } from '@module/sheet-common/sheet-post-render'
-import { ActorAttributes } from "@actor/attribute";
-import { ActorCharacteristic, ActorCharacteristics } from "@actor/characteristic";
+import { ActorAttributes } from '@actor/attribute'
+import { ActorCharacteristic, ActorCharacteristics } from '@actor/characteristic'
 import { EquipmentTypes } from '@item/equipment'
 
-export abstract class ActorSheetBase<TActor extends ActorMythras>
-  extends ActorSheet<TActor, ItemMythras> {
-  roller!: Roller
-  sheetPostRender!: SheetPostRender
+export abstract class ActorSheetBase<TActor extends ActorMythras> extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.sheets.ActorSheetV2<Actor>
+) {
+  // The mixin resolves ActorSheetV2<Actor>; narrow the accessor back to the concrete actor type.
+  override get actor(): TActor {
+    return super.actor as TActor
+  }
+  roller: Roller
 
-  constructor(object: TActor, options: Partial<ActorSheetOptions>) {
-    super(object, options)
-    // Apply styles after renderActorSheet hook
-    Hooks.on('renderActorSheet', () => {
-      this.sheetPostRender = new SheetPostRender(this.element)
-      this.postRender()
-    })
+  static override DEFAULT_OPTIONS: Partial<ApplicationConfiguration> = {
+    classes: ['mythras', 'sheet', 'actor'],
+    tag: 'form',
+    position: { width: 800, height: 900 },
+    actions: {
+      editImage: ActorSheetBase.#editImage
+    }
+  }
 
+  static override PARTS: Record<string, { template: string }> = {
+    main: {
+      // The theme decides the template, so it can only be resolved at render time.
+      get template() {
+        return game.mythras.theme.getTheme().getCharacterActorTemplate()
+      }
+    }
+  }
+
+  constructor(options: Partial<DocumentSheetConfiguration>) {
+    super(options)
     this.roller = new Roller(this.actor)
   }
 
-  static override get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      dragDrop: [{dragSelector: ['.item'], dropSelector: null}]
+  static async #editImage(this: ActorSheetBase<any>, _event: Event, target: HTMLElement) {
+    const field = target.dataset.field || 'img'
+    const current = (this.actor as any)[field]
+    const fp = new FilePicker({
+      type: 'image',
+      current,
+      callback: (path: string) => this.actor.update({ [field]: path })
     })
+    fp.render(true)
   }
 
   /**
    * @returns All data needed to render the template of this actor
    */
-  override async getData(options: ActorSheetOptions = this.options): Promise<ActorSheetData<TActor>> {
-    options.id ||= this.id;
-
-    let actorSystem: ActorData = this.actor.system;
-    let actorAttributes: ActorAttributes = actorSystem.attributes;
-    let actorChar: any = actorSystem.characteristics;
+  protected override async _prepareContext(options: ApplicationRenderOptions): Promise<object> {
+    let actorSystem: ActorData = this.actor.system
+    let actorAttributes: ActorAttributes = actorSystem.attributes
+    let actorChar: any = actorSystem.characteristics
 
     const data: any = {
-      items: {...this.actor.itemTypes},
+      items: { ...this.actor.itemTypes },
       armorPenalty: this.actor.armorPenalty,
       fatigue: this.actor.fatigue,
       encumbrance: this.actor.encumbrance,
       movement: this.actor.movement,
       statTracker: this.actor.statTracker,
-      magicSkillNames: this.actor.itemTypes.spell.map(spell => ({ value: spell.magicSkillName, label: spell.magicSkillName })).filter((v, i, a) => a.findIndex(o => o.value === v.value) === i),
-      editable: this.isEditable,
+      magicSkillNames: this.actor.itemTypes.spell
+        .map((spell) => ({ value: spell.magicSkillName, label: spell.magicSkillName }))
+        .filter((v, i, a) => a.findIndex((o) => o.value === v.value) === i),
       system: actorSystem,
       actor: this.actor,
       isClassicTheme: game.mythras.theme.isClassic(),
-      options,
       tabs: [
         {
-          name: "core",
-          label: "MYTHRAS.Character"
+          name: 'core',
+          label: 'MYTHRAS.Character'
         },
         {
-          name: "combat",
-          label: "MYTHRAS.Combat"
+          name: 'combat',
+          label: 'MYTHRAS.Combat'
         },
         {
-          name: "abilities",
-          label: "MYTHRAS.Abilities"
+          name: 'abilities',
+          label: 'MYTHRAS.Abilities'
         },
         {
-          name: "equipment",
-          label: "MYTHRAS.Equipment"
+          name: 'equipment',
+          label: 'MYTHRAS.Equipment'
         },
         {
-          name: "notes",
-          label: "MYTHRAS.Journal"
+          name: 'notes',
+          label: 'MYTHRAS.Journal'
         }
       ],
       stats: {
@@ -88,8 +105,8 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
           derivedName: 'maxActionPoints',
           currentValue: actorAttributes.actionPoints.value,
           derivedValue: this.actor.maxActionPoints,
-          modifierName: "system.attributes.actionPoints.mod",
-          modifierValue: actorAttributes.actionPoints.mod,
+          modifierName: 'system.attributes.actionPoints.mod',
+          modifierValue: actorAttributes.actionPoints.mod
         },
         damageMod: {
           isAttribute: true,
@@ -97,7 +114,7 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
           label: 'MYTHRAS.DAMAGE_MOD',
           derivedName: 'damageMod',
           derivedValue: this.actor.damageMod,
-          modifierName: "system.attributes.damageMod.mod",
+          modifierName: 'system.attributes.damageMod.mod',
           modifierValue: actorAttributes.damageMod.mod
         },
         experienceMod: {
@@ -106,7 +123,7 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
           label: 'MYTHRAS.EXPERIENCE_MOD',
           derivedName: 'experienceMod',
           derivedValue: this.actor.experienceMod,
-          modifierName: "system.attributes.experienceMod.mod",
+          modifierName: 'system.attributes.experienceMod.mod',
           modifierValue: actorAttributes.experienceMod.mod
         },
         healingRate: {
@@ -115,7 +132,7 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
           label: 'MYTHRAS.HEALING_RATE',
           derivedName: 'healingRate',
           derivedValue: this.actor.healingRate,
-          modifierName: "system.attributes.healingRate.mod",
+          modifierName: 'system.attributes.healingRate.mod',
           modifierValue: actorAttributes.healingRate.mod
         },
         initiativeBonus: {
@@ -124,7 +141,7 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
           label: 'MYTHRAS.INITIATIVE_BONUS',
           derivedName: 'initiativeBonus',
           derivedValue: this.actor.initiativeBonus,
-          modifierName: "system.attributes.initiativeBonus.mod",
+          modifierName: 'system.attributes.initiativeBonus.mod',
           modifierValue: actorAttributes.initiativeBonus.mod
         },
         luckPoints: {
@@ -134,17 +151,17 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
           derivedName: 'maxLuckPoints',
           currentValue: actorAttributes.luckPoints.value,
           derivedValue: this.actor.maxLuckPoints,
-          modifierName: "system.attributes.luckPoints.mod",
+          modifierName: 'system.attributes.luckPoints.mod',
           modifierValue: actorAttributes.luckPoints.mod
         },
         magicPoints: {
           isAttribute: true,
           tracked: true,
-          label: game.mythras.theme.getTheme().relabel("Actor-getData", 'MYTHRAS.MAGIC_POINTS'),
+          label: game.mythras.theme.getTheme().relabel('Actor-getData', 'MYTHRAS.MAGIC_POINTS'),
           derivedName: 'maxMagicPoints',
           currentValue: actorAttributes.magicPoints.value,
           derivedValue: this.actor.maxMagicPoints,
-          modifierName: "system.attributes.magicPoints.mod",
+          modifierName: 'system.attributes.magicPoints.mod',
           modifierValue: actorAttributes.magicPoints.mod
         },
         tenacity: {
@@ -154,7 +171,7 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
           derivedName: 'maxTenacity',
           currentValue: actorAttributes.tenacity.value,
           derivedValue: this.actor.maxTenacity,
-          modifierName: "system.attributes.tenacity.mod",
+          modifierName: 'system.attributes.tenacity.mod',
           modifierValue: actorAttributes.tenacity.mod
         },
         experienceRoll: {
@@ -165,49 +182,49 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
         }
       },
       characteristics: {
-        str:{
+        str: {
           derivedValue: this.actor.characteristics.str,
           value: actorChar.str.value,
           mod: this.actor.characteristicsMod.str,
-          label: "MYTHRAS.STRENGTH"
+          label: 'MYTHRAS.STRENGTH'
         },
-        con:{
+        con: {
           derivedValue: this.actor.characteristics.con,
           value: actorChar.con.value,
           mod: this.actor.characteristicsMod.con,
-          label: "MYTHRAS.CONSTITUTION"
+          label: 'MYTHRAS.CONSTITUTION'
         },
-        siz:{
+        siz: {
           derivedValue: this.actor.characteristics.siz,
           value: actorChar.siz.value,
           mod: this.actor.characteristicsMod.siz,
-          label: "MYTHRAS.SIZE"
+          label: 'MYTHRAS.SIZE'
         },
-        dex:{
+        dex: {
           derivedValue: this.actor.characteristics.dex,
           value: actorChar.dex.value,
           mod: this.actor.characteristicsMod.dex,
-          label: "MYTHRAS.DEXTERITY"
+          label: 'MYTHRAS.DEXTERITY'
         },
-        int:{
+        int: {
           derivedValue: this.actor.characteristics.int,
           value: actorChar.int.value,
           mod: this.actor.characteristicsMod.int,
-          label: "MYTHRAS.INTELLIGENCE"
+          label: 'MYTHRAS.INTELLIGENCE'
         },
-        pow:{
+        pow: {
           derivedValue: this.actor.characteristics.pow,
           value: actorChar.pow.value,
           mod: this.actor.characteristicsMod.pow,
-          label: "MYTHRAS.POWER"
+          label: 'MYTHRAS.POWER'
         },
-        cha:{
+        cha: {
           derivedValue: this.actor.characteristics.cha,
           value: actorChar.cha.value,
           mod: this.actor.characteristicsMod.cha,
-          label: "MYTHRAS.CHARISMA"
+          label: 'MYTHRAS.CHARISMA'
         }
-      },    
+      },
       fatigueLevelLabels: [
         { value: 'fresh', label: 'MYTHRAS.Fresh' },
         { value: 'winded', label: 'MYTHRAS.Winded' },
@@ -227,14 +244,14 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
     data.journalHTML = await TextEditor.enrichHTML(data.system.journal, {
       secrets: this.actor.isOwner,
       rollData: data.rollData
-    });
+    })
 
     // Abilities HTML enrichment
     data.abilitiesDesc = await TextEditor.enrichHTML(data.system.abilitiesDesc, {
       secrets: this.actor.isOwner,
       rollData: data.rollData
-    });
-    
+    })
+
     this.sortItems(data)
     return data
   }
@@ -264,83 +281,28 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
     })
   }
 
-  private postRender() {
-    this.sheetPostRender.postRender()
-    this.applyEncumbranceStyles()
-    this.applyWoundedHitLocationStyles()
-    this.hideMinimizedStats()
-    this.filterSpells()
-    this.filterEquipment()
-    //this.applySkillFumbledNotifier()
-  }
+  protected override _onRender(context: object, options: DocumentSheetRenderOptions): void {
+    super._onRender(context, options)
 
-  private applyEncumbranceStyles() {
-    const segments = $(`[id^="CharacterSheetMythras-"][id$="-Actor-${this.actor.id}"] .encumbrance-bar .percent-segment-filled`)
-    if (this.actor.encumbrance.isOverMaxLoad) {
-      segments.removeClass('burdened overloaded').addClass('maxload')
-    } else if (this.actor.encumbrance.isOverloaded) {
-      segments.removeClass('burdened maxload').addClass('overloaded')
-    } else if (this.actor.encumbrance.isBurdened) {
-      segments.removeClass('overloaded maxload').addClass('burdened')
+    const root = this.element
+    const on = (selector: string, type: string, listener: (event: Event) => void) => {
+      root.querySelectorAll(selector).forEach((el) => el.addEventListener(type, listener))
     }
-  }
-
-  private applyWoundedHitLocationStyles() {
-    //@ts-ignore
-    const hitLocations: HitLocationMythras[] = this.actor.items.filter(
-      (item) => item.type == 'hitLocation'
-    )
-    for (let hitLocation of hitLocations) {
-      let currentHp = hitLocation.system.currentHp
-      let hitLocationElement: any = document.querySelector(
-        `[id^="CharacterSheetMythras-"][id$="-Actor-${this.actor.id}"] .hitLocation-table [data-item-id="${hitLocation.id}"]`
-      )
-
-      if (currentHp <= hitLocation.maxHp * -1 && !!hitLocationElement) {
-        hitLocationElement.style.backgroundColor = '#c5000094'
-
-      } else if (currentHp <= 0 && !!hitLocationElement) {
-        hitLocationElement.style.backgroundColor = '#ed5b1585'
-
-      }
-    }
-  }
-
-  private hideMinimizedStats() {
-    this.element.find('[data-stat-name]').each((_: any, stat: HTMLInputElement) => {
-      const statName = $(stat).attr('data-stat-name')
-      const bubble = $(stat).find('.number-input-container')
-      const label = $(stat).find('.stat-minimizer')
-      const actor: any = this.actor
-      // if (actor.system.attributes[statName].minimize) {
-      //   bubble.addClass('hidden')
-      //   label.addClass('sideways-text')
-      // } else {
-      //   bubble.removeClass('hidden')
-      //   label.removeClass('sideways-text')
-      // }
-    })
-  }
-
-  override activateListeners(html: JQuery) {
-    super.activateListeners(html)
-    const actor: any = this.actor
 
     // Listens for item-input updates. Element with [data-item] that contain inputs
     // are listened to. If an input changes, update the embedded document associated with
     // that data-item using the data-item-id attribute on that same element
-    html.find('[data-item] input, [data-item] select').on('change', async (event: any) => {
-      let target = event.target as HTMLInputElement
-      let itemId = $(target.closest('[data-item]')).attr('data-item-id')
-      let propertyName = $(target).attr('data-item-property')
-      let item = this.actor.items.get(itemId)
+    on('[data-item] input, [data-item] select', 'change', async (event) => {
+      const target = event.target as HTMLInputElement
+      const itemId = target.closest('[data-item]')?.getAttribute('data-item-id')
+      const propertyPath = target.getAttribute('data-item-property')
+      const item = itemId ? this.actor.items.get(itemId) : undefined
+      if (!item || !propertyPath) return
       let newValue: string | boolean = target.value
-      if ($(target).is(':checkbox')) {
+      if (target.type === 'checkbox') {
         newValue = target.checked
       }
-      if (propertyName != 'name') {
-        propertyName = 'system.' + propertyName
-      }
+      const propertyName = propertyPath !== 'name' ? `system.${propertyPath}` : 'name'
       await this.actor.updateEmbeddedDocuments('Item', [
         {
           _id: item.id,
@@ -350,125 +312,181 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
     })
 
     // Everything below here is only needed if the sheet is editable
-    if (!this.options.editable) return
+    if (this.isEditable) {
+      // Add Actor Item
+      on('.item-create', 'click', this.onItemCreate.bind(this))
 
-    // Add Actor Item
-    html.find('.item-create').on('click', this.onItemCreate.bind(this))
-
-    // Update Actor Item
-    html.find('.item-edit').on('click', (ev: any) => {
-      const li = $(ev.currentTarget).parents('.item')
-      const item = actor.items.get(li.data('itemId'))
-      item.sheet.render(true)
-    })
-
-    // Delete Actor Item
-    html.find('.item-delete').on('click', (ev: any) => {
-      const li = $(ev.currentTarget).parents('.item')
-      let item = actor.items.get(li.data('itemId'))
-
-      new Dialog({
-        title: 'Delete',
-        content: `Are you sure you want to delete ${item.name}`,
-        buttons: {
-          ok: {
-            label: 'Yes',
-            callback: async (html) => {
-              item.delete()
-            }
-          },
-          cancel: {
-            label: 'Cancel'
-          }
-        }
-      }).render(true)
-      li.slideUp(200, () => this.render(false))
-    })
-
-    // html.find('.skill-alpha-sort').on('click', (ev) => {
-    //   let data = this.getData()
-    //   if (ev.currentTarget.id == 'professional-alpha-sort') {
-    //   }
-    // })
-
-    // Skill roll button listeners
-    html.find('.rollableSkill').on('contextmenu', (event: any) => this.handleItemRoll(event, this.roller.rollSkill.bind(this.roller)));
-    html.find('.rollableSkill').on('click', (event: any) => this.handleSkillRollClick(event));
-
-
-    // Melee Weapon roll button listener
-    html.find('.rollableMeleeDamage').on('click', (event: any) => this.handleItemRoll(event, this.roller.rollMeleeDamage.bind(this.roller)));
-
-    // Ranged Weapon roll button listener
-    html.find('.rollableRangedDamage').on('click', (event: any) => this.handleItemRoll(event, this.roller.rollRangedDamage.bind(this.roller)));
-
-    // Hit Location roll button listener
-    html.find('.roll-hitlocations-button').on('click', (event: any) => {
-      event.preventDefault();
-      this.roller.rollHitLocation();
-    });
-
-    // Skill roll button listener
-    html.find('.recoverCharacteristicPools').on('click', (event: any) => this.handleRecoverCharacteristicPools(event))
-
-    html.find('.stat-settings').on('click', (event: any) => {
-      event.preventDefault()
-      let statList = 'Coming soon :)'
-      new Dialog({
-        title: 'Stat Tracker',
-        content: statList,
-        buttons: {}
-      }).render(true)
-    })
-    html.find('.stat-increase').on('click', (event: any) => {
-      event.preventDefault()
-      let data: any = actor.system
-      const statID = $(event.target.closest('[data-stat-name]')).attr('data-stat-name')
-
-      let trackedStats = data.trackedStats
-      actor.update({
-        ['system.trackedStats.' + statID + '.value']: Number(trackedStats[statID].value) + 1
+      // Update Actor Item
+      on('.item-edit', 'click', (event) => {
+        const li = (event.currentTarget as HTMLElement).closest('.item')
+        const itemId = li?.getAttribute('data-item-id')
+        const item = itemId ? this.actor.items.get(itemId) : undefined
+        item?.sheet.render(true)
       })
-    })
 
-    html.find('.stat-decrease').on('click', (event: any) => {
+      // Delete Actor Item
+      on('.item-delete', 'click', async (event) => {
+        const li = (event.currentTarget as HTMLElement).closest('.item')
+        const itemId = li?.getAttribute('data-item-id')
+        const item = itemId ? this.actor.items.get(itemId) : undefined
+        if (!item) return
+
+        const proceed = await foundry.applications.api.DialogV2.confirm({
+          window: { title: 'Delete', controls: [] },
+          content: `<p>Are you sure you want to delete ${item.name}</p>`,
+          modal: true
+        })
+        if (proceed) item.delete()
+      })
+
+      // Skill roll button listeners
+      on('.rollableSkill', 'contextmenu', (event) => {
+        this.handleItemRoll(event, this.roller.rollSkill.bind(this.roller))
+      })
+      on('.rollableSkill', 'click', (event) => {
+        void this.handleSkillRollClick(event)
+      })
+
+      // Melee Weapon roll button listener
+      on('.rollableMeleeDamage', 'click', (event) => {
+        this.handleItemRoll(event, this.roller.rollMeleeDamage.bind(this.roller))
+      })
+
+      // Ranged Weapon roll button listener
+      on('.rollableRangedDamage', 'click', (event) => {
+        this.handleItemRoll(event, this.roller.rollRangedDamage.bind(this.roller))
+      })
+
+      // Hit Location roll button listener
+      on('.roll-hitlocations-button', 'click', (event) => {
+        event.preventDefault()
+        this.roller.rollHitLocation()
+      })
+
+      // Recover M-Space conflict pool button listener
+      on('.recoverCharacteristicPools', 'click', (event) => {
+        this.handleRecoverCharacteristicPools(event)
+      })
+
+      on('.stat-settings', 'click', (event) => {
+        event.preventDefault()
+        new foundry.applications.api.DialogV2({
+          window: { title: 'Stat Tracker', controls: [] },
+          content: '<p>Coming soon :)</p>',
+          buttons: []
+        }).render({ force: true })
+      })
+
+      on('.stat-increase', 'click', (event) => {
+        event.preventDefault()
+        this.shiftTrackedStat(event, 1)
+      })
+
+      on('.stat-decrease', 'click', (event) => {
+        event.preventDefault()
+        this.shiftTrackedStat(event, -1)
+      })
+
+      on('#equipmentSearch', 'input', (event) => {
+        this.searchEquipment((event.target as HTMLInputElement).value)
+      })
+    }
+
+    this.bindTabNavigation()
+    this.postRender()
+  }
+
+  /**
+   * Tabs are not managed by HandlebarsApplicationMixin: apply the persisted tab
+   * state to the freshly rendered markup and bind click handling once per render.
+   */
+  private bindTabNavigation() {
+    const nav = this.element.querySelector<HTMLElement>('.sheet-tabs[data-group]')
+    if (!nav) return
+    const group = nav.getAttribute('data-group') || 'primary'
+    const first = nav.querySelector<HTMLElement>('[data-tab]')?.dataset.tab
+    const active = this.tabGroups[group] ?? first
+    if (!active) return
+    this.tabGroups[group] = active
+
+    const applyState = (tab: string) => {
+      nav.querySelectorAll<HTMLElement>('[data-tab]').forEach((el) => {
+        el.classList.toggle('active', el.getAttribute('data-tab') === tab)
+      })
+      this.element
+        .querySelectorAll<HTMLElement>(`.tab[data-group="${group}"]`)
+        .forEach((el) => {
+          el.classList.toggle('active', el.getAttribute('data-tab') === tab)
+        })
+    }
+
+    applyState(active)
+    nav.addEventListener('click', (event) => {
+      const tab = (event.target as HTMLElement)
+        .closest<HTMLElement>('[data-tab]')
+        ?.getAttribute('data-tab')
+      if (!tab) return
       event.preventDefault()
-      let data: any = actor.system
-      const statID = $(event.target.closest('[data-stat-name]')).attr('data-stat-name')
-
-      let trackedStats = data.trackedStats
-      actor.update({
-        ['system.trackedStats.' + statID + '.value']: Number(trackedStats[statID].value) - 1
-      })
+      this.tabGroups[group] = tab
+      applyState(tab)
     })
+  }
 
-    html.find('#equipmentSearch').on('input', async (event: any) => {
-      let target = event.target as HTMLInputElement;
-      this.searchEquipment($(target).val());
-    });
+  private postRender() {
+    new SheetPostRender(this.element).postRender()
+    this.applyEncumbranceStyles()
+    this.applyWoundedHitLocationStyles()
+    this.filterSpells()
+    this.filterEquipment()
+  }
 
-    // Drag events for macros.
-    if (actor.isOwner) {
-      let sheet: any = this
-      let handler = (ev: any) => sheet.onDragItemStart(ev)
-      html.find('li.item').each((i: any, li: any) => {
-        if (li.classList.contains('inventory-header')) return
-        li.setAttribute('draggable', true)
-        li.addEventListener('dragstart', handler, false)
-      })
+  private applyEncumbranceStyles() {
+    const segments = this.element.querySelectorAll(
+      '.encumbrance-bar .percent-segment-filled'
+    )
+    let state = ''
+    if (this.actor.encumbrance.isOverMaxLoad) {
+      state = 'maxload'
+    } else if (this.actor.encumbrance.isOverloaded) {
+      state = 'overloaded'
+    } else if (this.actor.encumbrance.isBurdened) {
+      state = 'burdened'
+    }
+    segments.forEach((segment) => {
+      segment.classList.remove('burdened', 'overloaded', 'maxload')
+      if (state) segment.classList.add(state)
+    })
+  }
+
+  private applyWoundedHitLocationStyles() {
+    //@ts-ignore
+    const hitLocations: HitLocationMythras[] = this.actor.items.filter(
+      (item) => item.type == 'hitLocation'
+    )
+    for (let hitLocation of hitLocations) {
+      let currentHp = hitLocation.system.currentHp
+      let hitLocationElement = this.element.querySelector<HTMLElement>(
+        `.hitLocation-table [data-item-id="${hitLocation.id}"]`
+      )
+
+      if (currentHp <= hitLocation.maxHp * -1 && !!hitLocationElement) {
+        hitLocationElement.style.backgroundColor = '#c5000094'
+      } else if (currentHp <= 0 && !!hitLocationElement) {
+        hitLocationElement.style.backgroundColor = '#ed5b1585'
+      }
     }
   }
 
   /**
    * Handle creating a new Owned Item for the actor using initial data defined in the HTML dataset
-   * @param {Event} event   The originating click event
+   * @param event   The originating click event
    * @private
    */
-  private onItemCreate(event: any) {
+  private onItemCreate(event: Event) {
     event.preventDefault()
-    const header = event.currentTarget
+    const header = event.currentTarget as HTMLElement
     // Get the type of item to create.
-    const type = header.dataset.type
+    const type = header.dataset.type!
     // Grab any data associated with this control.
     const data = foundry.utils.duplicate(header.dataset)
     // Initialize a default name.
@@ -488,63 +506,81 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
     return this.actor.createEmbeddedDocuments('Item', [itemData])
   }
 
-  //@ts-ignore
-  private handleItemRoll(event: JQuery.ClickEvent<HTMLElement, undefined, HTMLElement, HTMLElement>, rollFunction: (item: Item<ActorMythras>) => any) {
-    event.preventDefault();
-    const itemId = $(event.currentTarget.closest('[data-item-id]')).attr('data-item-id');
-    const item = this.actor.items.get(itemId);
-    rollFunction(item);
+  private handleItemRoll(event: Event, rollFunction: (item: Item<ActorMythras>) => any) {
+    event.preventDefault()
+    const itemId = (event.currentTarget as HTMLElement).closest('[data-item-id]')
+      ?.getAttribute('data-item-id')
+    const item = itemId ? this.actor.items.get(itemId) : undefined
+    if (!item) return
+    rollFunction(item)
   }
 
-  private async handleSkillRollClick(event: JQuery.ClickEvent<HTMLElement, undefined, HTMLElement, HTMLElement>) {
-    event.preventDefault();
+  private async handleSkillRollClick(event: Event) {
+    event.preventDefault()
     // Identify which skill was clicked
-    const li = (event.currentTarget as HTMLElement).closest<HTMLElement>('[data-item-id]');
-    const skillId = li?.dataset.itemId;
-    let skill: SkillMythras;
+    const li = (event.currentTarget as HTMLElement).closest<HTMLElement>('[data-item-id]')
+    const skillId = li?.dataset.itemId
+    let skill: SkillMythras
     if (!skillId) {
-      skill = this.actor.sortedSkills[0];
+      skill = this.actor.sortedSkills[0]
       if (!skill) {
-        return;
+        return
       }
     } else {
-      skill = this.actor.items.get(skillId) as unknown as SkillMythras;
+      skill = this.actor.items.get(skillId) as unknown as SkillMythras
     }
-    this.handleSkillRoll(skill);
-   
-  }  
+    this.handleSkillRoll(skill)
+  }
 
-  public async handleSkillRoll(skill: SkillMythras, contestedRollOptions?: { contestedSkill?: SkillMythras, contestedActor?: ActorMythras, contestedSuccess?: string, contestedScore?: number, contestedRollDifficulty?: number, contestedRollAugmentation?: string }) {    
+  public async handleSkillRoll(
+    skill: SkillMythras,
+    contestedRollOptions?: {
+      contestedSkill?: SkillMythras
+      contestedActor?: ActorMythras
+      contestedSuccess?: string
+      contestedScore?: number
+      contestedRollDifficulty?: number
+      contestedRollAugmentation?: string
+    }
+  ) {
     // Check if the roll is contested.
-    let isContestedRoll = false;
-    if (!!contestedRollOptions && !!contestedRollOptions.contestedSkill && !!contestedRollOptions.contestedActor && !!contestedRollOptions.contestedSuccess && !!contestedRollOptions.contestedScore && !!contestedRollOptions.contestedRollDifficulty) {
-      isContestedRoll = true;
+    let isContestedRoll = false
+    if (
+      !!contestedRollOptions &&
+      !!contestedRollOptions.contestedSkill &&
+      !!contestedRollOptions.contestedActor &&
+      !!contestedRollOptions.contestedSuccess &&
+      !!contestedRollOptions.contestedScore &&
+      !!contestedRollOptions.contestedRollDifficulty
+    ) {
+      isContestedRoll = true
     }
 
-    const targetTokenActor = game.user.targets.first()?.actor as ActorMythras;
-    const isTokenTargeted = !!targetTokenActor && targetTokenActor.testUserPermission(game.user, CONST.DOCUMENT_OWNERSHIP_LEVELS.LIMITED);
-    let targetName = ``;
-    let targetAugmentSkills;      
+    const targetTokenActor = game.user.targets.first()?.actor as ActorMythras
+    const isTokenTargeted =
+      !!targetTokenActor &&
+      targetTokenActor.testUserPermission(game.user, CONST.DOCUMENT_OWNERSHIP_LEVELS.LIMITED)
+    let targetName = ``
+    let targetAugmentSkills
     if (isTokenTargeted) {
-      targetName = targetTokenActor.name;
-      targetAugmentSkills = targetTokenActor.sortedSkills
-      .map(i => {
-        const s = i as unknown as SkillMythras;
-        return { id: s.id, label: `${s.name} (${s.totalVal}%)` };
-      });
+      targetName = targetTokenActor.name
+      targetAugmentSkills = targetTokenActor.sortedSkills.map((i) => {
+        const s = i as unknown as SkillMythras
+        return { id: s.id, label: `${s.name} (${s.totalVal}%)` }
+      })
     }
 
     // 1) Build a text summary of the current modifiers for the tooltip
-    const modifiersList = this.roller.getSkillRollModifiers(skill);
+    const modifiersList = this.roller.getSkillRollModifiers(skill)
     let modText = modifiersList
-      .map(m => {
-          return `<strong>${m.name}:</strong><br/> ${m.value}`;
+      .map((m) => {
+        return `<strong>${m.name}:</strong><br/> ${m.value}`
       })
-      .join('<br/>');
-    let isModTextVisible = true;
+      .join('<br/>')
+    let isModTextVisible = true
     if (!modText) {
-      modText = game.i18n.localize('MYTHRAS.No_Penalties');
-      isModTextVisible = false;
+      modText = game.i18n.localize('MYTHRAS.No_Penalties')
+      isModTextVisible = false
     }
 
     // Prepare difficulty labels
@@ -555,93 +591,181 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
       game.i18n.localize('MYTHRAS.hard_dif'),
       game.i18n.localize('MYTHRAS.formidable_dif'),
       game.i18n.localize('MYTHRAS.herculean_dif')
-    ].map((label, idx) => ({value: idx, label, selected: idx === 2}));
+    ].map((label, idx) => ({ value: idx, label, selected: idx === 2 }))
 
     // Prepare augmentable skills
     const augmentSkills = this.actor.sortedSkills
       //.filter(i => i.id !== skill.id) // prevent a character from augmenting a skill with their same skill (currently broken since it doesn't account for the ability to change the selected skill)
-      .map(i => {
-        const s = i as unknown as SkillMythras;
-        return { id: s.id, label: `${s.name} (${s.totalVal}%)`, selected: s.id === skill.id };
-      });
+      .map((i) => {
+        const s = i as unknown as SkillMythras
+        return { id: s.id, label: `${s.name} (${s.totalVal}%)`, selected: s.id === skill.id }
+      })
 
-    const content = await renderTemplate('systems/mythras/templates/dialogs/skillRoll-dialog.hbs',
-      {
-        skillName: skill.name,
-        skillTotal: skill.totalVal,
-        modText,
-        difficulties,
-        augmentSkills,
-        isTokenTargeted,
-        targetName,
-        targetAugmentSkills,
-        isModTextVisible,
-        areLuckPointsAvailable: (Number(this.actor.statTracker.trackedStats.luckPoints.value) > 0) ? true : false
+    const content = await renderTemplate('systems/mythras/templates/dialogs/skillRoll-dialog.hbs', {
+      skillName: skill.name,
+      skillTotal: skill.totalVal,
+      modText,
+      difficulties,
+      augmentSkills,
+      isTokenTargeted,
+      targetName,
+      targetAugmentSkills,
+      isModTextVisible,
+      areLuckPointsAvailable:
+        Number(this.actor.statTracker.trackedStats.luckPoints.value) > 0 ? true : false
+    })
+
+    // UI state management for the dialog's conditional sections
+    const initDialogUi = (element: HTMLElement) => {
+      const rollForm = element.querySelector<HTMLFormElement>('form')
+      if (!rollForm) return
+      const skillCap = rollForm.querySelector<HTMLElement>('#cap-skill-container')
+      const skillAugment = rollForm.querySelector<HTMLElement>('#augment-skill-container')
+      const customAugment = rollForm.querySelector<HTMLElement>('#augment-custom-container')
+      const targetSkillAugment = rollForm.querySelector<HTMLElement>(
+        '#target-augment-skill-container'
+      )
+      const augmentSkillSelect = rollForm.querySelector<HTMLSelectElement>(
+        '#augment-skill-container select[name="augmentSkill"]'
+      )
+      const capSkillSelect = rollForm.querySelector<HTMLSelectElement>(
+        '#cap-skill-container select[name="capSkill"]'
+      )
+      if (!skillCap || !skillAugment || !customAugment || !targetSkillAugment) return
+
+      // Hide them all initially
+      skillCap.style.display = 'none'
+      skillAugment.style.display = 'none'
+      customAugment.style.display = 'none'
+      targetSkillAugment.style.display = 'none'
+
+      // Show every option, then hide the currently picked skill from a select
+      const hideSkillOption = (select: HTMLSelectElement | null, skillId: string) => {
+        if (!select) return
+        select.querySelectorAll<HTMLOptionElement>('option').forEach((opt) => {
+          opt.style.display = ''
+          opt.selected = false
+        })
+        const excluded = select.querySelector<HTMLOptionElement>(`option[value="${skillId}"]`)
+        if (excluded) {
+          excluded.style.display = 'none'
+          excluded.selected = false
+        }
+        if (select.value === skillId) {
+          const available = Array.from(select.options).find(
+            (opt) => opt.style.display !== 'none'
+          )
+          select.value = available ? available.value : ''
+        }
       }
-    );
+
+      hideSkillOption(augmentSkillSelect, skill.id)
+      hideSkillOption(capSkillSelect, skill.id)
+
+      // On radio change, show/hide appropriately
+      rollForm.addEventListener('change', (ev) => {
+        const target = ev.target as HTMLElement | null
+        if (!target) return
+        if (target instanceof HTMLInputElement && target.name === 'augmentOption') {
+          skillCap.style.display = 'none'
+          skillAugment.style.display = 'none'
+          customAugment.style.display = 'none'
+          targetSkillAugment.style.display = 'none'
+
+          switch (target.value) {
+            case 'skillCap':
+              skillCap.style.display = ''
+              break
+            case 'skillAugment':
+              skillAugment.style.display = ''
+              break
+            case 'customAugment':
+              customAugment.style.display = ''
+              break
+            case 'targetSkillAugment':
+              targetSkillAugment.style.display = ''
+              break
+          }
+        } else if (target instanceof HTMLSelectElement && target.name === 'rolledSkill') {
+          // Lookup and reset the skill variable
+          skill = this.actor.items.get(target.value) as unknown as SkillMythras
+          hideSkillOption(augmentSkillSelect, skill.id)
+          hideSkillOption(capSkillSelect, skill.id)
+        }
+      })
+    }
 
     // Show the dialog
-    new Dialog({
-      title: `${isContestedRoll ? `${game.i18n.localize('MYTHRAS.Contested')} ` : ``}${game.i18n.localize('MYTHRAS.Roll')}`,
+    const dialog = new (class extends foundry.applications.api.DialogV2 {
+      protected override _onRender(context: object, options: ApplicationRenderOptions): void {
+        super._onRender(context, options)
+        initDialogUi(this.element)
+      }
+    })({
+      window: {
+        title: `${isContestedRoll ? `${game.i18n.localize('MYTHRAS.Contested')} ` : ``}${game.i18n.localize('MYTHRAS.Roll')}`,
+        resizable: true,
+        controls: []
+      },
       content,
-
-      buttons: {
-        roll: {
+      position: { width: 600, height: 440 },
+      buttons: [
+        {
+          action: 'roll',
           icon: '<i class="fas fa-dice"></i>',
           label: game.i18n.localize('MYTHRAS.Roll'),
-          callback: (dlgHtml: JQuery) => {
-            const form = dlgHtml.find('form')[0] as HTMLFormElement;
-            const data = new FormData(form);
+          default: true,
+          callback: (_event, _button, dialog) => {
+            const form = dialog.element.querySelector('form')
+            if (!form) return
+            const data = new FormData(form)
 
-            const difficulty = Number(data.get('difficulty'));
-            const augmentOption = String(data.get('augmentOption'));
+              const difficulty = Number(data.get('difficulty'))
+              const augmentOption = String(data.get('augmentOption'))
 
-            let capSkill: SkillMythras | undefined;
-            let augmentSkill: SkillMythras | undefined;
-            let targetAugmentSkill: SkillMythras | undefined;
-            let customAugment: number | undefined;
-            let customAugmentReason: string | undefined;
-            const useLuckPoint : string = String(data.get('useLuckPoint'));
+              let capSkill: SkillMythras | undefined
+              let augmentSkill: SkillMythras | undefined
+              let targetAugmentSkill: SkillMythras | undefined
+              let customAugment: number | undefined
+              let customAugmentReason: string | undefined
+              const useLuckPoint: string = String(data.get('useLuckPoint'))
 
-            switch (augmentOption) {
-              case 'skillCap': {
-                const cid = String(data.get('capSkill') || '');
-                capSkill = cid
-                  ? this.actor.items.get(cid) as unknown as SkillMythras
-                  : undefined;
-                break;
+              switch (augmentOption) {
+                case 'skillCap': {
+                  const cid = String(data.get('capSkill') || '')
+                  capSkill = cid
+                    ? (this.actor.items.get(cid) as unknown as SkillMythras)
+                    : undefined
+                  break
+                }
+                case 'skillAugment': {
+                  const aid = String(data.get('augmentSkill') || '')
+                  augmentSkill = aid
+                    ? (this.actor.items.get(aid) as unknown as SkillMythras)
+                    : undefined
+                  break
+                }
+                case 'customAugment': {
+                  customAugment = Number(data.get('augmentCustomValue'))
+                  customAugmentReason = String(data.get('augmentCustomReason'))
+                  break
+                }
+                case 'targetSkillAugment': {
+                  const aid = String(data.get('targetAugmentSkill') || '')
+                  targetAugmentSkill = aid
+                    ? (targetTokenActor.items.get(aid) as unknown as SkillMythras)
+                    : undefined
+                  break
+                }
               }
-              case 'skillAugment': {
-                const aid = String(data.get('augmentSkill') || '');
-                augmentSkill = aid
-                  ? this.actor.items.get(aid) as unknown as SkillMythras
-                  : undefined;
-                break;
-              }
-              case 'customAugment': {
-                customAugment = Number(data.get('augmentCustomValue'));
-                customAugmentReason = String(data.get('augmentCustomReason'));
-                break;
-              }
-              case 'targetSkillAugment': {
-                const aid = String(data.get('targetAugmentSkill') || '');
-                targetAugmentSkill = aid
-                  ? targetTokenActor.items.get(aid) as unknown as SkillMythras
-                  : undefined;
-                break;
-              }
-            }
 
-            this.roller.rollSkillWithOptions
-            (
-              skill, 
-              { 
-                difficulty, 
-                capSkill, 
-                augmentSkill, 
-                customAugment, 
-                customAugmentReason, 
-                targetAugmentSkill, 
+              this.roller.rollSkillWithOptions(skill, {
+                difficulty,
+                capSkill,
+                augmentSkill,
+                customAugment,
+                customAugmentReason,
+                targetAugmentSkill,
                 targetName,
                 isContestedRoll,
                 useLuckPoint,
@@ -651,98 +775,18 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
                 contestedScore: contestedRollOptions?.contestedScore,
                 contestedRollDifficulty: contestedRollOptions?.contestedRollDifficulty,
                 contestedRollAugmentation: contestedRollOptions?.contestedRollAugmentation
-              }
-            );
+              })
+            }
           }
-        }
-      },
-      default: 'roll',
-      render: (dlgHtml: JQuery) => {
-        // Find the form and containers
-        const form = dlgHtml.find('form');
-        const skillCap = form.find('#cap-skill-container');
-        const skillAugment = form.find('#augment-skill-container');
-        const customAugment = form.find('#augment-custom-container');
-        const targetSkillAugment = form.find('#target-augment-skill-container');
-        const augmentSkillSelect = form.find('#augment-skill-container select[name="augmentSkill"]');
-        const capSkillSelect = form.find('#cap-skill-container select[name="capSkill"]');
-
-        // Hide them all initially
-        skillCap.hide();
-        skillAugment.hide();
-        customAugment.hide();
-        targetSkillAugment.hide();
-
-        // In the "Augment With..." dropdown, show all options then hide the picked one
-        augmentSkillSelect.find('option').show();  
-        augmentSkillSelect.find(`option[value="${skill.id}"]`).hide().prop('selected', false);
-        if (augmentSkillSelect.val() === skill.id) {
-          const availableOptions = augmentSkillSelect.find('option').not('[style*="display: none"]');
-          if (availableOptions.length > 0) {
-            augmentSkillSelect.val(availableOptions.first().val()); 
-          } else {
-            augmentSkillSelect.val(''); 
-          }
-        }
-
-        // In the "Cap By..." dropdown, show all options then hide the picked one
-        capSkillSelect.find('option').show();  
-        capSkillSelect.find(`option[value="${skill.id}"]`).hide().prop('selected', false);
-        if (capSkillSelect.val() === skill.id) {
-          const availableOptions = capSkillSelect.find('option').not('[style*="display: none"]');
-          if (availableOptions.length > 0) {
-            capSkillSelect.val(availableOptions.first().val()); 
-          } else {
-            capSkillSelect.val(''); 
-          }
-        }
-
-        // On radio change, show/hide appropriately
-        form.on('change', 'input[name="augmentOption"]', ev => {
-          const val = (ev.currentTarget as HTMLInputElement).value;
-          skillCap.hide();
-          skillAugment.hide();
-          customAugment.hide();
-          targetSkillAugment.hide();
-
-          switch (val) {
-            case 'skillCap':
-              skillCap.show();
-              break;
-            case 'skillAugment':
-              skillAugment.show();
-              break;
-            case 'customAugment':
-              customAugment.show();
-              break;
-            case 'targetSkillAugment':
-              targetSkillAugment.show();
-              break;
-          }
-        });
-        form.on('change', 'select[name="rolledSkill"]', (event) => {
-          const select = event.currentTarget as HTMLSelectElement;
-          const skillId = select.value; // same as $(select).val()
-
-          // Lookup and reset your skill variable
-          skill = this.actor.items.get(skillId) as unknown as SkillMythras;
-
-          // In the "Augment With..." dropdown, show all options then hide the picked one
-          augmentSkillSelect.find('option').show();
-          augmentSkillSelect.find(`option[value="${skillId}"]`).hide().prop('selected', false);
-
-          // In the "Cap By..." dropdown, show all options then hide the picked one
-          capSkillSelect.find('option').show();  
-          capSkillSelect.find(`option[value="${skillId}"]`).hide().prop('selected', false);
-        });
-      }
-    }, {width: 600, height: 440, resizable: true}).render(true);
+      ]
+    })
+    dialog.render({ force: true })
   }
 
   private async filterSpells() {
     const actorData = this.actor.system
     let filterBy = actorData.spellFilterOption
-    let items: any[] = [...document.querySelectorAll(`[id^="CharacterSheetMythras-"][id$="-Actor-${this.actor.id}"] .spell-list-table .item`)]
+    let items: any[] = [...this.element.querySelectorAll('.spell-list-table .item')]
     for (let item of items) {
       switch (filterBy) {
         case 'All':
@@ -761,7 +805,7 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
   private async filterEquipment() {
     const actorData = this.actor.system
     let filterBy = actorData.equipmentFilterOption
-    let items: any[] = [...document.querySelectorAll(`[id^="CharacterSheetMythras-"][id$="-Actor-${this.actor.id}"] .equipment-table .item`)]
+    let items: any[] = [...this.element.querySelectorAll('.equipment-table .item')]
     for (let item of items) {
       switch (filterBy) {
         case 'All':
@@ -778,44 +822,41 @@ export abstract class ActorSheetBase<TActor extends ActorMythras>
   }
 
   private async searchEquipment(searchBy: string) {
-    this.filterEquipment();
+    this.filterEquipment()
 
-    let items: any[] = [...document.querySelectorAll(`[id^="CharacterSheetMythras-"][id$="-Actor-${this.actor.id}"] .equipment-table .item.active`)]
-    for (let item of items) {      
+    let items: any[] = [...this.element.querySelectorAll('.equipment-table .item.active')]
+    for (let item of items) {
       item.dataset.itemName.toLocaleLowerCase().includes(searchBy.toLocaleLowerCase())
         ? item.classList.add('active')
-        : item.classList.remove('active');
+        : item.classList.remove('active')
     }
   }
-
-    // applySkillFumbledNotifier() {
-    //     event.preventDefault();
-    //     console.error(this.actor.items.entries())
-    //     this.actor.items.forEach((item) => {
-    //         if (item.type == "standardSkill" || item.type == "professionalSkill" || item.type == "passion" || item.type == "combatStyle") {
-    //             console.error(item)
-    //             if (item.system.fumbled) {
-    //                 item.applyClass = "fumbled-notifier";
-    //             } else {
-    //                 item.applyClass = "";
-    //             }
-    //         }
-    //     });
-    // }
 
   /**
    * Theme M-Space introduced a conflict pool mechanic which is based on the primary characteristics.
    * These pools are depleted by use and need to be refilled by resting.
    */
-  //@ts-ignore
-  private handleRecoverCharacteristicPools(event: JQuery.ClickEvent<HTMLElement, undefined, HTMLElement, HTMLElement>) {
-    let k: keyof ActorCharacteristics;
+  private handleRecoverCharacteristicPools(event: Event) {
+    event.preventDefault()
+    let k: keyof ActorCharacteristics
     for (k in this.actor.system.characteristics) {
-      const actorCharacteristic: ActorCharacteristic = this.actor.system.characteristics[k];
+      const actorCharacteristic: ActorCharacteristic = this.actor.system.characteristics[k]
       if (actorCharacteristic.value != actorCharacteristic.pool) {
-        actorCharacteristic.pool = actorCharacteristic.value;
+        actorCharacteristic.pool = actorCharacteristic.value
       }
     }
     this.render(false)
+  }
+
+  private shiftTrackedStat(event: Event, delta: number) {
+    const data: any = this.actor.system
+    const statID = (event.target as HTMLElement).closest<HTMLElement>('[data-stat-name]')
+      ?.dataset.statName
+    if (!statID) return
+
+    let trackedStats = data.trackedStats
+    this.actor.update({
+      ['system.trackedStats.' + statID + '.value']: Number(trackedStats[statID].value) + delta
+    })
   }
 }

@@ -26,15 +26,15 @@
         height: 20px;
       }
 
-      &[type="number"] {
+      &[type='number'] {
         -webkit-appearance: auto; /* For Chrome, Safari, and Edge */
         appearance: auto;
         width: 60px;
         padding-left: 15px;
       }
 
-      &[type="number"]::-webkit-inner-spin-button,
-      &[type="number"]::-webkit-outer-spin-button {
+      &[type='number']::-webkit-inner-spin-button,
+      &[type='number']::-webkit-outer-spin-button {
         -webkit-appearance: auto; /* For WebKit browsers */
         margin: 0;
       }

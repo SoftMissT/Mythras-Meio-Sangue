@@ -177,7 +177,9 @@ declare class FilePicker extends Application<FilePickerOptions> {
 
 type FilePickerDisplayMode = (typeof FilePicker)["DISPLAY_MODES"][number];
 
-declare interface FilePickerOptions extends ApplicationOptions {
+// ApplicationOptions fields intentionally omitted: FilePicker is a V1 legacy app that merges
+// its own defaults at runtime, so callers legitimately pass only { type, current, callback }.
+declare interface FilePickerOptions {
     type?: (typeof FilePicker.FILE_TYPES)[number];
     /** The current file path being modified, if any */
     current?: string;

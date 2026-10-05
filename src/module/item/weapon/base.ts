@@ -11,7 +11,9 @@ interface WeaponMythras {
   readonly system: WeaponData
 }
 
-class WeaponMythras<TParent extends ActorMythras | null = ActorMythras  | null> extends  PhysicalItemMythras<TParent> {
+class WeaponMythras<
+  TParent extends ActorMythras | null = ActorMythras | null
+> extends PhysicalItemMythras<TParent> {
   get damageRoll() {
     const systemData = this.system
     if (this.damageModifier) {

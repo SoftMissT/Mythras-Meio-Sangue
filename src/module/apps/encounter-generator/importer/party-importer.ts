@@ -11,7 +11,7 @@ export class EncounterGeneratorPartyImporter extends EncounterGeneratorImporter 
 
   protected prepareFilters(): void {
     this.filters = {
-      search: ""
+      search: ''
     }
   }
 
@@ -29,22 +29,24 @@ export class EncounterGeneratorPartyImporter extends EncounterGeneratorImporter 
     if (!template.name.toLocaleLowerCase().includes(searchText.toLocaleLowerCase())) {
       include = false
     }
-    if (Object.keys(this.selectedOwners).length && !Object.keys(this.selectedOwners).includes(template.owner)) {
+    if (
+      Object.keys(this.selectedOwners).length &&
+      !Object.keys(this.selectedOwners).includes(template.owner)
+    ) {
       include = false
     }
 
     return include
   }
 
-  //@ts-ignore
-  private searchParties($searchInput: JQuery<HTMLElement>) {
+  private searchParties(searchInput: HTMLInputElement) {
     if (this.showAdvancedFilters) {
-      this.element.find('[data-filter-list]').each((_: any, element: { scrollTop: any }) => {
-        const listName = $(element).data().filterList
+      this.element.querySelectorAll<HTMLElement>('[data-filter-list]').forEach((element) => {
+        const listName = element.dataset.filterList!
         this.filterListLastScrollTops[listName] = element.scrollTop
       })
     }
-    this.filters.search = $searchInput.val() as string
+    this.filters.search = searchInput.value
     this.scrollLimit = 100
     this.lastScrollTop = 0
     this.templatesPage = []
@@ -55,16 +57,18 @@ export class EncounterGeneratorPartyImporter extends EncounterGeneratorImporter 
 
   public override activateListeners(): void {
     super.activateListeners()
-    const $partyFilters = this.element.find(".template-list-filters");
-    const $partySearchInput = $partyFilters.find('input[name=searchTerm]')
-    $partySearchInput.on('keypress', (event: { key: string }) => {
-      if(event.key === 'Enter')
-      {
-        this.searchParties($partySearchInput)
-      }
-    });
-    $partyFilters.find('.search-button').on('click', (event: any) => {
-      this.searchParties($partySearchInput)
+    const partyFilters = this.element.querySelector<HTMLElement>('.template-list-filters')
+    if (!partyFilters) return
+    const searchInput = partyFilters.querySelector<HTMLInputElement>('input[name=searchTerm]')
+    if (searchInput) {
+      searchInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          this.searchParties(searchInput)
+        }
+      })
+    }
+    partyFilters.querySelector('.search-button')?.addEventListener('click', () => {
+      if (searchInput) this.searchParties(searchInput)
     })
   }
 

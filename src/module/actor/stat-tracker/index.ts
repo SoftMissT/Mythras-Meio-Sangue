@@ -17,8 +17,7 @@ interface TrackedStatExport extends TrackedStat {
 }
 
 export class ActorMythrasStatTracker {
-  constructor(private actor: ActorMythras) {
-  }
+  constructor(private actor: ActorMythras) {}
 
   get trackedStats(): Record<string, TrackedStat> {
     const actorData: any = this.actor.system
@@ -50,6 +49,6 @@ export class ActorMythrasStatTracker {
   }
 
   private relabelFromTheme(statName: string): string {
-    return game.mythras.theme.getTheme().relabel("stat-tracker", statName)
+    return game.mythras.theme.getTheme().relabel('stat-tracker', statName)
   }
 }

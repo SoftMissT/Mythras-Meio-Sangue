@@ -1,30 +1,38 @@
 export class SheetPostRender {
-  //@ts-ignore
-  constructor(private sheetElement: JQuery<HTMLElement>) {}
+  private sheetElement: HTMLElement
+
+  constructor(sheetElement: HTMLElement) {
+    this.sheetElement = sheetElement
+  }
 
   public postRender() {
     this.applyStatStyles()
-    //this.resizeFitWidthInputs()
   }
 
   private applyStatStyles() {
-    this.sheetElement.find('.modifier').each((_: any, modifier: HTMLInputElement) => {
-      let statToModify = $(modifier).closest('[data-stat]').find('.modifiable')
-      if (Number(modifier.value) > 0) {
-        $(modifier).removeClass('decreased').addClass('increased')
-        statToModify.removeClass('decreased').addClass('increased')
-      } else if (Number(modifier.value) < 0) {
-        $(modifier).removeClass('increased').addClass('decreased')
-        statToModify.removeClass('increased').addClass('decreased')
+    this.sheetElement.querySelectorAll<HTMLInputElement>('.modifier').forEach((modifier) => {
+      const statToModify = modifier
+        .closest('[data-stat]')
+        ?.querySelectorAll<HTMLElement>('.modifiable')
+      const value = Number(modifier.value)
+      if (value > 0) {
+        modifier.classList.remove('decreased')
+        modifier.classList.add('increased')
+        statToModify?.forEach((el) => {
+          el.classList.remove('decreased')
+          el.classList.add('increased')
+        })
+      } else if (value < 0) {
+        modifier.classList.remove('increased')
+        modifier.classList.add('decreased')
+        statToModify?.forEach((el) => {
+          el.classList.remove('increased')
+          el.classList.add('decreased')
+        })
       } else {
-        $(modifier).removeClass('decreased increased')
-        statToModify.removeClass('decreased increased')
+        modifier.classList.remove('decreased', 'increased')
+        statToModify?.forEach((el) => el.classList.remove('decreased', 'increased'))
       }
     })
   }
-
-  // private resizeFitWidthInputs() {
-  //   const input = this.sheetElement.find('.text-input--fit-width')
-  //   input.width((input.val() as string).length + 'ch')
-  // }
 }

@@ -65,7 +65,6 @@ export class ActorMythrasMovement {
   }
 
   public get run(): number {
-
     return (
       3 * (this.walk + Math.floor(this.athleticsSkillValue / 50)) -
       this.actor.armorPenalty +
@@ -94,10 +93,10 @@ export class ActorMythrasMovement {
     return (
       Math.floor(
         Math.max(
-          (this.actorHeight / 2) / 100 + //convert to meters
-          (this.athleticsSkillValue / 100) + // 20 cm per 20% in Athletics
-          this.getStatMod('jumpVertical') - 
-          (this.actor.armorPenalty / 2), 
+          this.actorHeight / 2 / 100 + //convert to meters
+            this.athleticsSkillValue / 100 + // 20 cm per 20% in Athletics
+            this.getStatMod('jumpVertical') -
+            this.actor.armorPenalty / 2,
           0 // minimum height of 1 step
         ) * 100
       ) / 100 //truncate to 2 decimal places
@@ -109,16 +108,18 @@ export class ActorMythrasMovement {
       Math.floor(
         Math.max(
           (this.actorHeight * 2) / 100 + //convert to meters
-          (this.athleticsSkillValue / 20) + //1 meter per 20% in Athletics
-          this.getStatMod('jumpHorizontal') - 
-          (this.actor.armorPenalty / 2), //jumping in Armor is hard
+            this.athleticsSkillValue / 20 + //1 meter per 20% in Athletics
+            this.getStatMod('jumpHorizontal') -
+            this.actor.armorPenalty / 2, //jumping in Armor is hard
           0 //minimum jump of 1 step
         ) * 100
       ) / 100 //truncate to 2 decimal places
     )
   }
 
-  private getStatMod(statName: 'run' | 'sprint' | 'jumpHorizontal' | 'jumpVertical' | 'climb' | 'swim'): number {
+  private getStatMod(
+    statName: 'run' | 'sprint' | 'jumpHorizontal' | 'jumpVertical' | 'climb' | 'swim'
+  ): number {
     return Number(this.actor.system.attributes[statName].mod) || 0
   }
 

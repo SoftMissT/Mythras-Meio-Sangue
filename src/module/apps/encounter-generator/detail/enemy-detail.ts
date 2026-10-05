@@ -1,14 +1,21 @@
-import { EncounterGeneratorActorBuilder } from "../actor-builder"
+import { EncounterGeneratorActorBuilder } from '../actor-builder'
 
-export class EncounterGeneratorEnemyDetail extends Application {
-  private skollProxyBaseUrl: string = "https://www.megproxy.com/"
+export class EncounterGeneratorEnemyDetail extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.api.ApplicationV2
+) {
+  private skollProxyBaseUrl: string = 'https://www.megproxy.com/'
   private dataReady: boolean = false
   private showLoader: boolean = true
   private enemy: any = {}
 
   private actorBuilder: EncounterGeneratorActorBuilder
 
-  constructor(private enemyId: string, private enemyName: string, private tags: string, options?: Partial<ApplicationOptions>) {
+  constructor(
+    private enemyId: string,
+    private enemyName: string,
+    private tags: string,
+    options: Partial<ApplicationConfiguration> = {}
+  ) {
     super(options)
     this.actorBuilder = new EncounterGeneratorActorBuilder()
   }
@@ -17,18 +24,21 @@ export class EncounterGeneratorEnemyDetail extends Application {
     return this.enemyName
   }
 
-  static override get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "encounter-generator-enemy-detail",
-      classes: ['mythras', 'sheet'],
-      template: "systems/mythras/templates/apps/encounter-generator/detail/enemy-detail.hbs",
-      width: 550,
-      height: 600,
-      resizable: true
-    });
+  static override DEFAULT_OPTIONS: Partial<ApplicationConfiguration> = {
+    classes: ['mythras', 'sheet'],
+    position: { width: 550, height: 600 },
+    window: { resizable: true, controls: [] }
   }
 
-  override async getData(options?: Partial<ApplicationOptions>): Promise<object> {
+  static override PARTS: Record<string, { template: string }> = {
+    main: {
+      template: 'systems/mythras/templates/apps/encounter-generator/detail/enemy-detail.hbs'
+    }
+  }
+
+  protected override async _prepareContext(
+    _options: ApplicationRenderOptions
+  ): Promise<object> {
     const tagList = this.tags.split(',')
     return {
       enemyName: this.enemyName,
@@ -39,11 +49,25 @@ export class EncounterGeneratorEnemyDetail extends Application {
     }
   }
 
-  override async _render(force?: boolean, options?: RenderOptions) {
-    await super._render(force, options);
+  protected override _onRender(context: object, options: ApplicationRenderOptions): void {
+    super._onRender(context, options)
     if (!this.dataReady) {
       this.getEnemyData()
     }
+
+    const refreshButton = this.element.querySelector<HTMLElement>('.refresh-button')
+    refreshButton?.addEventListener('click', (event) => {
+      event.preventDefault()
+      this.showLoader = true
+      this.dataReady = false
+      this.render(true)
+    })
+
+    const importButton = this.element.querySelector<HTMLElement>('.import-button')
+    importButton?.addEventListener('click', (event) => {
+      event.preventDefault()
+      this.importEnemy()
+    })
   }
 
   private async getEnemyData() {
@@ -58,30 +82,8 @@ export class EncounterGeneratorEnemyDetail extends Application {
     let template = await response.json()
     return template[0]
   }
-  
+
   private async importEnemy() {
     await this.actorBuilder.createActor(this.enemy, null)
-  }
-  
-  override activateListeners(html: JQuery<HTMLElement>): void {
-    super.activateListeners(html);
-
-    const refreshButton = html.find(".refresh-button")[0] as HTMLElement | undefined;
-    if (refreshButton) {
-      refreshButton.addEventListener("click", (event) => {
-        event.preventDefault()
-        this.showLoader = true
-        this.dataReady = false
-        this.render(true); // TS-safe, v13 uses boolean for force
-      });
-    }
-
-    const importButton = html.find(".import-button")[0] as HTMLElement | undefined;
-    if (importButton) {
-      importButton.addEventListener("click", (event) => {
-        event.preventDefault()
-        this.importEnemy()
-      });
-    }
   }
 }

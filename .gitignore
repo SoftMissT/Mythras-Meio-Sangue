@@ -10,3 +10,5 @@ foundryconfig.json
 # Node Modules
 node_modules/
 npm-debug.log
+AGENTS.md   
+CLAUDE.md   
