@@ -1,7 +1,7 @@
 # Mythras: Meio-Sangue 🗡️
 
 > **Adaptação em português brasileiro para Foundry VTT**  
-> Projeto de fã — não oficial — baseado no [Foundry VTT Mythras](https://gitlab.com/kp-systems/mythras) (kp-systems, licença MIT).
+> Projeto de fã  não oficial  baseado no [Foundry VTT Mythras](https://gitlab.com/kp-systems/mythras) (kp-systems, licença MIT).
 
 ---
 
@@ -23,17 +23,27 @@ Este repositório é um fork do excelente trabalho desenvolvido por [kp-systems]
 
 ### Créditos
 
-**Projeto original — Foundry VTT Mythras:**
+**Projeto original  Foundry VTT Mythras:**
 - [Jonathan Karkour](mailto:greshbolt@gmail.com) (Discord: Greshbolt#1682)
 - [Tom Paoloni](mailto:tpaoloni@protonmail.com) (Discord: goog#9039)
 - Todos os [contribuidores do projeto original](https://gitlab.com/kp-systems/mythras/-/graphs/master)
 
 **Adaptação Meio-Sangue (PT-BR):**
-- [SoftMissT](https://github.com/SoftMissT) — tradução, adaptação e manutenção
+- [SoftMissT](https://github.com/SoftMissT)  tradução, adaptação e manutenção
 
 ### Instalação
 
 > ⚙️ Em construção — instruções de instalação serão adicionadas em breve.
+
+Para instalar no Foundry VTT, cole o link do manifest em **Configurações → Sistema → Instalar Sistema**:
+
+```
+https://raw.githubusercontent.com/SoftMissT/Mythras-Meio-Sangue/main/system.json
+```
+
+Ou baixe o ZIP diretamente:
+
+📦 **[Download — versão mais recente](https://github.com/SoftMissT/Mythras-Meio-Sangue/archive/refs/heads/main.zip)**
 
 ### Como Contribuir
 
@@ -59,17 +69,25 @@ This repository is a fork of the excellent work developed by [kp-systems](https:
 
 ### Credits
 
-**Original project — Foundry VTT Mythras:**
+**Original project  Foundry VTT Mythras:**
 - [Jonathan Karkour](mailto:greshbolt@gmail.com) (Discord: Greshbolt#1682)
 - [Tom Paoloni](mailto:tpaoloni@protonmail.com) (Discord: goog#9039)
 - All [original project contributors](https://gitlab.com/kp-systems/mythras/-/graphs/master)
 
 **Meio-Sangue Adaptation (PT-BR):**
-- [SoftMissT](https://github.com/SoftMissT) — translation, adaptation & maintenance
+- [SoftMissT](https://github.com/SoftMissT)  translation, adaptation & maintenance
 
 ### Installation
 
-> ⚙️ Under construction — installation instructions coming soon.
+To install in Foundry VTT, paste the manifest link under **Settings → System → Install System**:
+
+```
+https://raw.githubusercontent.com/SoftMissT/Mythras-Meio-Sangue/main/system.json
+```
+
+Or download the ZIP directly:
+
+📦 **[Download — latest version](https://github.com/SoftMissT/Mythras-Meio-Sangue/archive/refs/heads/main.zip)**
 
 ### Contributing
 
@@ -81,7 +99,7 @@ See [CONTRIBUTING.md](mythras/CONTRIBUTING.md) for the development environment s
 
 <img src="http://thedesignmechanism.com/resources/mythras-gateway-logo-black-small.jpg" alt="Mythras Gateway Logo" width="180"/>
 
-*Mythras Gateway — usado com permissão / used with permission*  
+*Mythras Gateway  usado com permissão / used with permission*  
 *The Design Mechanism makes no representation or warranty as to the quality, viability, or suitability for purpose of this product.*
 
 </div>
